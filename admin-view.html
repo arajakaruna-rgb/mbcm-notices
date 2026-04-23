@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a5f">
+<title>MBCM Admin — Submissions</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --mbcm-navy: #1e3a5f;
+    --mbcm-blue: #2E75B6;
+    --mbcm-blue-soft: #EBF3FB;
+    --mbcm-gold: #c8a962;
+    --ink: #111827;
+    --ink-soft: #374151;
+    --muted: #6b7280;
+    --rule: #e5e7eb;
+    --bg: #ffffff;
+    --bg-soft: #f8fafc;
+    --yes: #047857;
+    --yes-bg: #d1fae5;
+    --no: #b91c1c;
+    --no-bg: #fee2e2;
+    --abstain: #6b7280;
+    --abstain-bg: #e5e7eb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px; line-height: 1.5;
+    color: var(--ink); background: var(--bg-soft);
+    -webkit-font-smoothing: antialiased;
+  }
+  .topbar {
+    background: var(--mbcm-navy); color: #fff;
+    padding: 14px 20px; display: flex;
+    justify-content: space-between; align-items: center;
+  }
+  .topbar__title {
+    font-size: 16px; font-weight: 700;
+    letter-spacing: 0.3px;
+  }
+  .topbar__user { font-size: 13px; opacity: 0.9; }
+  .topbar__logout {
+    background: transparent; border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; padding: 6px 12px; border-radius: 6px;
+    font-size: 13px; cursor: pointer; margin-left: 12px;
+  }
+
+  /* Login screen */
+  .login-wrap {
+    max-width: 420px; margin: 80px auto; padding: 32px;
+    background: #fff; border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border-top: 6px solid var(--mbcm-blue);
+  }
+  .login-wrap h1 {
+    font-size: 22px; color: var(--mbcm-navy);
+    margin: 0 0 6px 0;
+  }
+  .login-wrap p { color: var(--muted); margin: 0 0 20px 0; font-size: 14px; }
+  .login-wrap label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--ink-soft); margin-bottom: 6px;
+  }
+  .login-wrap input {
+    width: 100%; padding: 12px 14px;
+    font-size: 15px; border: 1.5px solid var(--rule);
+    border-radius: 8px; margin-bottom: 14px;
+  }
+  .login-wrap button {
+    width: 100%; padding: 12px; border: none;
+    border-radius: 8px; background: var(--mbcm-navy);
+    color: #fff; font-weight: 600; cursor: pointer;
+    font-size: 15px;
+  }
+  .login-wrap button:disabled { opacity: 0.5; }
+  .login-msg {
+    margin-top: 14px; padding: 12px; border-radius: 8px;
+    font-size: 13px;
+  }
+  .login-msg--ok { background: var(--yes-bg); color: var(--yes); }
+  .login-msg--err { background: var(--no-bg); color: var(--no); }
+  .login-msg[hidden] { display: none; }
+
+  /* Main dashboard */
+  .filter-bar {
+    background: #fff; padding: 16px 20px;
+    border-bottom: 1px solid var(--rule);
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;
+  }
+  .filter-field { display: flex; flex-direction: column; }
+  .filter-field label {
+    font-size: 12px; text-transform: uppercase;
+    color: var(--muted); font-weight: 700;
+    letter-spacing: 0.5px; margin-bottom: 4px;
+  }
+  .filter-field input, .filter-field select {
+    padding: 8px 10px; font-size: 14px;
+    border: 1.5px solid var(--rule); border-radius: 6px;
+    min-width: 180px;
+  }
+  .filter-refresh {
+    padding: 8px 16px; background: var(--mbcm-blue);
+    color: #fff; border: none; border-radius: 6px;
+    font-weight: 600; cursor: pointer; font-size: 14px;
+  }
+
+  .stats {
+    background: #fff; padding: 16px 20px;
+    border-bottom: 1px solid var(--rule);
+    display: flex; gap: 24px; flex-wrap: wrap;
+  }
+  .stat { flex: 1; min-width: 140px; }
+  .stat__label {
+    font-size: 11px; text-transform: uppercase;
+    color: var(--muted); font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .stat__value {
+    font-size: 28px; font-weight: 700;
+    color: var(--mbcm-navy); margin-top: 4px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex; background: #fff;
+    border-bottom: 1px solid var(--rule);
+    padding: 0 20px; overflow-x: auto;
+  }
+  .tab {
+    padding: 14px 18px; font-size: 14px; font-weight: 600;
+    color: var(--muted); cursor: pointer; border: none;
+    background: transparent; border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+  .tab--active {
+    color: var(--mbcm-navy);
+    border-bottom-color: var(--mbcm-blue);
+  }
+
+  .tab-panel { padding: 20px; }
+  .tab-panel[hidden] { display: none; }
+
+  .section-actions {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+  }
+  .section-actions h2 { font-size: 16px; color: var(--mbcm-navy); margin: 0; }
+  .btn-export {
+    padding: 8px 14px; background: var(--mbcm-gold);
+    color: var(--mbcm-navy); border: none; border-radius: 6px;
+    font-weight: 600; cursor: pointer; font-size: 13px;
+  }
+
+  /* Submission cards */
+  .card {
+    background: #fff; border: 1px solid var(--rule);
+    border-radius: 10px; padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .card__head {
+    display: flex; justify-content: space-between;
+    align-items: center; cursor: pointer;
+  }
+  .card__who {
+    font-weight: 700; color: var(--mbcm-navy);
+    font-size: 15px;
+  }
+  .card__meta {
+    font-size: 13px; color: var(--muted); margin-top: 2px;
+  }
+  .card__badge {
+    padding: 4px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: 600;
+    background: var(--mbcm-blue-soft); color: var(--mbcm-blue);
+  }
+  .card__detail {
+    margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    font-size: 13px;
+  }
+  .card__detail[hidden] { display: none; }
+  .card__grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 10px 20px; margin-bottom: 12px;
+  }
+  .card__grid dt { font-weight: 600; color: var(--ink-soft); font-size: 12px; }
+  .card__grid dd { margin: 0 0 4px 0; color: var(--ink); }
+  .sig-img {
+    max-width: 300px; border: 1px solid var(--rule);
+    border-radius: 4px; background: #fff; padding: 4px;
+    margin-top: 8px;
+  }
+
+  .motion-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 80px;
+    gap: 10px; align-items: center;
+    padding: 8px 10px; margin-bottom: 4px;
+    background: var(--bg-soft); border-radius: 6px;
+    font-size: 13px;
+  }
+  .motion-row__num {
+    font-weight: 700; color: var(--mbcm-navy);
+    text-align: center;
+  }
+  .motion-row__vote {
+    padding: 4px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 700; text-align: center;
+    text-transform: uppercase;
+  }
+  .motion-row__vote--yes { background: var(--yes-bg); color: var(--yes); }
+  .motion-row__vote--no { background: var(--no-bg); color: var(--no); }
+  .motion-row__vote--abstain { background: var(--abstain-bg); color: var(--abstain); }
+
+  /* Tally view */
+  .tally-table {
+    width: 100%; border-collapse: collapse;
+    background: #fff; border-radius: 8px; overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .tally-table th, .tally-table td {
+    padding: 10px 12px; text-align: left;
+    border-bottom: 1px solid var(--rule);
+    font-size: 13px;
+  }
+  .tally-table th {
+    background: var(--bg-soft);
+    font-weight: 700; color: var(--mbcm-navy);
+    font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .tally-table td.num { text-align: center; font-variant-numeric: tabular-nums; font-weight: 600; }
+  .tally-table td.count-yes { background: var(--yes-bg); color: var(--yes); }
+  .tally-table td.count-no { background: var(--no-bg); color: var(--no); }
+  .tally-table td.count-abstain { background: var(--abstain-bg); color: var(--abstain); }
+
+  .empty {
+    text-align: center; padding: 40px 20px;
+    color: var(--muted); font-size: 14px;
+  }
+  .loading {
+    text-align: center; padding: 60px 20px;
+    color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- Login screen -->
+<div id="login-screen" class="login-wrap" hidden>
+  <h1>MBCM Admin</h1>
+  <p>Sign in with your MBCM staff email address. You'll receive a secure one-time login link.</p>
+  <label for="email-input">Email address</label>
+  <input type="email" id="email-input" placeholder="you@ringwood.mbcm.com.au" autocomplete="email">
+  <button id="send-link-btn">Send Magic Link</button>
+  <div id="login-msg" class="login-msg" hidden></div>
+</div>
+
+<!-- Main dashboard -->
+<div id="dashboard" hidden>
+  <header class="topbar">
+    <div class="topbar__title">MBCM Submissions Admin</div>
+    <div>
+      <span class="topbar__user" id="user-email">—</span>
+      <button class="topbar__logout" id="logout-btn">Sign out</button>
+    </div>
+  </header>
+
+  <div class="filter-bar">
+    <div class="filter-field">
+      <label for="filter-oc">OC Plan Number</label>
+      <input type="text" id="filter-oc" placeholder="e.g. RP13411">
+    </div>
+    <div class="filter-field">
+      <label for="filter-meeting">Meeting Date</label>
+      <input type="date" id="filter-meeting">
+    </div>
+    <button class="filter-refresh" id="refresh-btn">Refresh</button>
+  </div>
+
+  <div class="stats" id="stats-area">
+    <div class="stat"><div class="stat__label">Proxies</div><div class="stat__value" id="stat-proxies">—</div></div>
+    <div class="stat"><div class="stat__label">Votes</div><div class="stat__value" id="stat-votes">—</div></div>
+    <div class="stat"><div class="stat__label">Total</div><div class="stat__value" id="stat-total">—</div></div>
+    <div class="stat"><div class="stat__label">Audit events</div><div class="stat__value" id="stat-audit">—</div></div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab tab--active" data-tab="proxies">Proxies</button>
+    <button class="tab" data-tab="votes">Votes</button>
+    <button class="tab" data-tab="tally">Vote Tally</button>
+    <button class="tab" data-tab="audit">Audit Log</button>
+  </nav>
+
+  <div class="tab-panel" id="tab-proxies">
+    <div class="section-actions">
+      <h2>Proxy Submissions</h2>
+      <button class="btn-export" onclick="exportCSV('proxies')">Download CSV</button>
+    </div>
+    <div id="proxies-list"><div class="loading">Loading…</div></div>
+  </div>
+
+  <div class="tab-panel" id="tab-votes" hidden>
+    <div class="section-actions">
+      <h2>Vote Submissions</h2>
+      <button class="btn-export" onclick="exportCSV('votes')">Download CSV</button>
+    </div>
+    <div id="votes-list"><div class="loading">Loading…</div></div>
+  </div>
+
+  <div class="tab-panel" id="tab-tally" hidden>
+    <div class="section-actions">
+      <h2>Motion Tally (from all Vote submissions)</h2>
+      <button class="btn-export" onclick="exportCSV('tally')">Download Tally CSV</button>
+    </div>
+    <div id="tally-area"><div class="loading">Loading…</div></div>
+  </div>
+
+  <div class="tab-panel" id="tab-audit" hidden>
+    <div class="section-actions">
+      <h2>Audit Log</h2>
+      <button class="btn-export" onclick="exportCSV('audit')">Download CSV</button>
+    </div>
+    <div id="audit-list"><div class="loading">Loading…</div></div>
+  </div>
+</div>
+
+<script>
+  // ==========================================================
+  // CONFIG
+  // ==========================================================
+  const SUPABASE_URL = 'https://trysksaprnuuxsqcoiwu.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_P0gogOaydZPReJYlwhqJMA_S6jd_Qko';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Belt-and-braces: even if someone manages to sign up, they can only
+  // actually see data if their email is on this list. Add staff emails here.
+  const ALLOWED_EMAILS = [
+    'aruna@goss.global'
+    // Add more MBCM staff emails as needed, one per line with a trailing comma
+  ];
+
+  // ==========================================================
+  // State
+  // ==========================================================
+  let currentData = { proxies: [], votes: [], audit: [] };
+
+  // ==========================================================
+  // Auth
+  // ==========================================================
+  async function init() {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      handleSignIn(session.user.email);
+    } else {
+      showLogin();
+    }
+
+    // Listen for auth state changes (magic-link callback)
+    sb.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        handleSignIn(session.user.email);
+      } else if (event === 'SIGNED_OUT') {
+        showLogin();
+      }
+    });
+  }
+
+  async function handleSignIn(email) {
+    // Email allowlist check — signs out and warns if not approved
+    const isAllowed = ALLOWED_EMAILS.some(e => e.toLowerCase() === (email || '').toLowerCase());
+    if (!isAllowed) {
+      alert('This email is not authorised to view the admin area. Contact the MBCM office if you believe this is an error.');
+      await sb.auth.signOut();
+      showLogin();
+      return;
+    }
+    showDashboard(email);
+  }
+
+  function showLogin() {
+    document.getElementById('login-screen').hidden = false;
+    document.getElementById('dashboard').hidden = true;
+  }
+
+  function showDashboard(email) {
+    document.getElementById('login-screen').hidden = true;
+    document.getElementById('dashboard').hidden = false;
+    document.getElementById('user-email').textContent = email || '';
+    loadData();
+  }
+
+  document.getElementById('send-link-btn').addEventListener('click', async () => {
+    const emailInput = document.getElementById('email-input');
+    const msg = document.getElementById('login-msg');
+    const btn = document.getElementById('send-link-btn');
+    const email = emailInput.value.trim();
+
+    if (!email) {
+      msg.textContent = 'Please enter your email address.';
+      msg.className = 'login-msg login-msg--err';
+      msg.hidden = false;
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    msg.hidden = true;
+
+    const { error } = await sb.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.href }
+    });
+
+    btn.disabled = false;
+    btn.textContent = 'Send Magic Link';
+
+    if (error) {
+      msg.textContent = 'Error: ' + error.message;
+      msg.className = 'login-msg login-msg--err';
+    } else {
+      msg.textContent = 'Check your inbox — the login link has been sent to ' + email + '. Clicking the link will bring you back here, signed in.';
+      msg.className = 'login-msg login-msg--ok';
+    }
+    msg.hidden = false;
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    await sb.auth.signOut();
+  });
+
+  // ==========================================================
+  // Tabs
+  // ==========================================================
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab--active'));
+      tab.classList.add('tab--active');
+      document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
+      document.getElementById('tab-' + tab.dataset.tab).hidden = false;
+    });
+  });
+
+  // ==========================================================
+  // Data loading
+  // ==========================================================
+  document.getElementById('refresh-btn').addEventListener('click', loadData);
+
+  async function loadData() {
+    const oc = document.getElementById('filter-oc').value.trim().toUpperCase();
+    const meeting = document.getElementById('filter-meeting').value;
+
+    document.getElementById('proxies-list').innerHTML = '<div class="loading">Loading…</div>';
+    document.getElementById('votes-list').innerHTML = '<div class="loading">Loading…</div>';
+    document.getElementById('tally-area').innerHTML = '<div class="loading">Loading…</div>';
+    document.getElementById('audit-list').innerHTML = '<div class="loading">Loading…</div>';
+
+    try {
+      let proxyQ = sb.from('proxies').select('*').order('submitted_at', { ascending: false });
+      let voteQ = sb.from('votes').select('*').order('submitted_at', { ascending: false });
+      let auditQ = sb.from('audit_log').select('*').order('created_at', { ascending: false }).limit(200);
+
+      if (oc) {
+        proxyQ = proxyQ.eq('oc_plan_number', oc);
+        voteQ = voteQ.eq('oc_plan_number', oc);
+        auditQ = auditQ.eq('oc_plan_number', oc);
+      }
+      if (meeting) {
+        proxyQ = proxyQ.eq('meeting_date', meeting);
+        voteQ = voteQ.eq('meeting_date', meeting);
+      }
+
+      const [proxyRes, voteRes, auditRes] = await Promise.all([proxyQ, voteQ, auditQ]);
+
+      if (proxyRes.error) throw proxyRes.error;
+      if (voteRes.error) throw voteRes.error;
+      if (auditRes.error) throw auditRes.error;
+
+      currentData.proxies = proxyRes.data || [];
+      currentData.votes = voteRes.data || [];
+      currentData.audit = auditRes.data || [];
+
+      document.getElementById('stat-proxies').textContent = currentData.proxies.length;
+      document.getElementById('stat-votes').textContent = currentData.votes.length;
+      document.getElementById('stat-total').textContent = currentData.proxies.length + currentData.votes.length;
+      document.getElementById('stat-audit').textContent = currentData.audit.length;
+
+      renderProxies();
+      renderVotes();
+      renderTally();
+      renderAudit();
+    } catch (err) {
+      alert('Error loading data: ' + err.message + '\n\nIf you just logged in, this may mean your email is not on the approved list. Contact the system administrator.');
+    }
+  }
+
+  // ==========================================================
+  // Renderers
+  // ==========================================================
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
+    }[c]));
+  }
+
+  function formatDate(s) {
+    if (!s) return '';
+    try { return new Date(s).toLocaleString('en-AU'); } catch { return s; }
+  }
+
+  function proxyTypeLabel(t) {
+    const map = {
+      attend_speak_vote_meeting: 'General attendance',
+      attend_speak_vote_dated: 'Dated authorisation',
+      ballot_vote: 'Ballot vote',
+      directed_instructions: 'Directed instructions',
+      committee_representation: 'Committee representation'
+    };
+    return map[t] || t || '';
+  }
+
+  function renderProxies() {
+    const list = document.getElementById('proxies-list');
+    if (currentData.proxies.length === 0) {
+      list.innerHTML = '<div class="empty">No proxy submissions match the current filter.</div>';
+      return;
+    }
+    list.innerHTML = currentData.proxies.map((p, i) => `
+      <div class="card">
+        <div class="card__head" onclick="toggleCard(this)">
+          <div>
+            <div class="card__who">${esc(p.owner_name_first)} ${esc(p.owner_name_last)} — Lot ${esc(p.lot_numbers)}</div>
+            <div class="card__meta">${esc(p.oc_plan_number)} • ${esc(p.meeting_date)} • ${esc(formatDate(p.submitted_at))}</div>
+          </div>
+          <span class="card__badge">${esc(proxyTypeLabel(p.proxy_type))}</span>
+        </div>
+        <div class="card__detail" hidden>
+          <dl class="card__grid">
+            <dt>Proxy holder</dt><dd>${esc(p.proxy_authorised_to || '—')}</dd>
+            <dt>Valid until</dt><dd>${esc(p.proxy_valid_until || '—')}</dd>
+            <dt>Address</dt><dd>${esc(p.owner_address)}</dd>
+            <dt>Submitted IP</dt><dd>${esc(p.submitter_ip || '—')}</dd>
+            <dt>Reference ID</dt><dd style="font-family: monospace; font-size: 11px;">${esc(p.id)}</dd>
+            <dt>Directed instructions</dt><dd>${esc(p.directed_instructions || '—')}</dd>
+          </dl>
+          <div><strong>Signature:</strong></div>
+          <img class="sig-img" src="${esc(p.signature_data)}" alt="Signature">
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderVotes() {
+    const list = document.getElementById('votes-list');
+    if (currentData.votes.length === 0) {
+      list.innerHTML = '<div class="empty">No vote submissions match the current filter.</div>';
+      return;
+    }
+    list.innerHTML = currentData.votes.map(v => {
+      const res = v.resolutions || {};
+      const motionsHtml = Object.entries(res)
+        .filter(([k]) => k !== '_meta')
+        .map(([key, val]) => {
+          if (val.subItems) {
+            return Object.entries(val.subItems).map(([subKey, subVal]) => `
+              <div class="motion-row">
+                <div class="motion-row__num">•</div>
+                <div>${esc(val.title)} — ${esc(subVal.label)}</div>
+                <div class="motion-row__vote motion-row__vote--${esc(subVal.vote)}">${esc(subVal.vote)}</div>
+              </div>
+            `).join('');
+          } else if (val.text !== undefined) {
+            return `
+              <div class="motion-row" style="grid-template-columns: 1fr;">
+                <div><strong>${esc(val.title)}:</strong> ${esc(val.text || '(none)')}</div>
+              </div>
+            `;
+          } else {
+            const extra = val.amount ? ` ($${esc(val.amount)})` : val.name ? ` (${esc(val.name)})` : '';
+            return `
+              <div class="motion-row">
+                <div class="motion-row__num">•</div>
+                <div>${esc(val.title)}${extra}</div>
+                <div class="motion-row__vote motion-row__vote--${esc(val.vote || 'abstain')}">${esc(val.vote || '—')}</div>
+              </div>
+            `;
+          }
+        }).join('');
+
+      const meta = res._meta || {};
+
+      return `
+        <div class="card">
+          <div class="card__head" onclick="toggleCard(this)">
+            <div>
+              <div class="card__who">${esc(v.owner_name_first)} ${esc(v.owner_name_last)} — Lot ${esc(v.lot_numbers)}</div>
+              <div class="card__meta">${esc(v.oc_plan_number)} • ${esc(v.meeting_date)} • ${esc(formatDate(v.submitted_at))}</div>
+            </div>
+            <span class="card__badge">${Object.keys(res).filter(k => k !== '_meta').length} motions</span>
+          </div>
+          <div class="card__detail" hidden>
+            <dl class="card__grid">
+              <dt>Address</dt><dd>${esc(v.owner_address)}</dd>
+              <dt>Proxy holder (if any)</dt><dd>${esc(meta.proxy_authorised_to || '—')}</dd>
+              <dt>Submitted IP</dt><dd>${esc(v.submitter_ip || '—')}</dd>
+              <dt>Reference ID</dt><dd style="font-family: monospace; font-size: 11px;">${esc(v.id)}</dd>
+            </dl>
+            <div style="margin: 12px 0 8px 0;"><strong>Votes on motions:</strong></div>
+            ${motionsHtml}
+            <div style="margin: 12px 0 6px 0;"><strong>Signature:</strong></div>
+            <img class="sig-img" src="${esc(v.signature_data)}" alt="Signature">
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderTally() {
+    const area = document.getElementById('tally-area');
+    if (currentData.votes.length === 0) {
+      area.innerHTML = '<div class="empty">No votes to tally for the current filter. Use OC + meeting date filters above.</div>';
+      return;
+    }
+
+    // Tally each motion across all vote submissions
+    const tally = {}; // { motionKey: { title, yes, no, abstain, subs: {} } }
+
+    for (const v of currentData.votes) {
+      const res = v.resolutions || {};
+      for (const [key, val] of Object.entries(res)) {
+        if (key === '_meta') continue;
+
+        if (val.subItems) {
+          if (!tally[key]) tally[key] = { title: val.title, subs: {} };
+          for (const [subKey, subVal] of Object.entries(val.subItems)) {
+            const sk = subKey;
+            if (!tally[key].subs[sk]) tally[key].subs[sk] = { label: subVal.label, yes: 0, no: 0, abstain: 0 };
+            const vote = subVal.vote;
+            if (vote === 'yes' || vote === 'no' || vote === 'abstain') {
+              tally[key].subs[sk][vote]++;
+            }
+          }
+        } else if (val.vote) {
+          if (!tally[key]) tally[key] = { title: val.title, yes: 0, no: 0, abstain: 0 };
+          if (val.vote === 'yes' || val.vote === 'no' || val.vote === 'abstain') {
+            tally[key][val.vote]++;
+          }
+        }
+      }
+    }
+
+    const rows = [];
+    for (const [key, data] of Object.entries(tally)) {
+      if (data.subs) {
+        for (const [subKey, sub] of Object.entries(data.subs)) {
+          rows.push({
+            motion: data.title + ' — ' + sub.label,
+            yes: sub.yes, no: sub.no, abstain: sub.abstain
+          });
+        }
+      } else {
+        rows.push({
+          motion: data.title,
+          yes: data.yes, no: data.no, abstain: data.abstain
+        });
+      }
+    }
+
+    area.innerHTML = `
+      <table class="tally-table">
+        <thead>
+          <tr>
+            <th>Motion</th>
+            <th class="num">Yes</th>
+            <th class="num">No</th>
+            <th class="num">Abstain</th>
+            <th class="num">Outcome</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => {
+            const outcome = r.yes > r.no ? 'PASS' : r.no > r.yes ? 'FAIL' : 'TIED';
+            const outcomeColor = outcome === 'PASS' ? 'var(--yes)' : outcome === 'FAIL' ? 'var(--no)' : 'var(--abstain)';
+            return `
+              <tr>
+                <td>${esc(r.motion)}</td>
+                <td class="num count-yes">${r.yes}</td>
+                <td class="num count-no">${r.no}</td>
+                <td class="num count-abstain">${r.abstain}</td>
+                <td class="num" style="color: ${outcomeColor}; font-weight: 700;">${outcome}</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+      <p style="font-size: 13px; color: var(--muted); margin-top: 16px;">
+        Simple majority tally. For owner-corp purposes, check whether special majority or unanimous resolutions apply for any specific motion (see Owners Corporations Act 2006).
+      </p>
+    `;
+  }
+
+  function renderAudit() {
+    const list = document.getElementById('audit-list');
+    if (currentData.audit.length === 0) {
+      list.innerHTML = '<div class="empty">No audit events.</div>';
+      return;
+    }
+    list.innerHTML = currentData.audit.map(a => `
+      <div class="card">
+        <div class="card__head" onclick="toggleCard(this)">
+          <div>
+            <div class="card__who">${esc(a.event_type)}</div>
+            <div class="card__meta">${esc(a.oc_plan_number || '—')} • ${esc(formatDate(a.created_at))}</div>
+          </div>
+          <span class="card__badge" style="background: ${a.event_type.includes('fail') ? 'var(--no-bg)' : 'var(--yes-bg)'}; color: ${a.event_type.includes('fail') ? 'var(--no)' : 'var(--yes)'};">${esc(a.event_type)}</span>
+        </div>
+        <div class="card__detail" hidden>
+          <dl class="card__grid">
+            <dt>IP</dt><dd>${esc(a.submitter_ip || '—')}</dd>
+            <dt>User-agent</dt><dd style="word-break: break-all; font-size: 11px;">${esc(a.submitter_user_agent || '—')}</dd>
+          </dl>
+          <div><strong>Payload summary:</strong></div>
+          <pre style="background: var(--bg-soft); padding: 10px; border-radius: 6px; font-size: 11px; overflow-x: auto;">${esc(JSON.stringify(a.payload_summary, null, 2))}</pre>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  window.toggleCard = function(headEl) {
+    const detail = headEl.nextElementSibling;
+    detail.hidden = !detail.hidden;
+  };
+
+  // ==========================================================
+  // CSV Export
+  // ==========================================================
+  window.exportCSV = function(kind) {
+    let rows = [];
+    let filename = `mbcm-${kind}-${new Date().toISOString().slice(0, 10)}.csv`;
+
+    if (kind === 'proxies') {
+      rows = currentData.proxies.map(p => ({
+        submitted_at: p.submitted_at,
+        plan: p.oc_plan_number,
+        meeting_date: p.meeting_date,
+        first_name: p.owner_name_first,
+        last_name: p.owner_name_last,
+        address: p.owner_address,
+        lot: p.lot_numbers,
+        proxy_type: proxyTypeLabel(p.proxy_type),
+        proxy_holder: p.proxy_authorised_to,
+        valid_until: p.proxy_valid_until,
+        directed_instructions: p.directed_instructions,
+        submitter_ip: p.submitter_ip,
+        reference_id: p.id
+      }));
+
+    } else if (kind === 'votes') {
+      rows = currentData.votes.flatMap(v => {
+        const base = {
+          submitted_at: v.submitted_at,
+          plan: v.oc_plan_number,
+          meeting_date: v.meeting_date,
+          first_name: v.owner_name_first,
+          last_name: v.owner_name_last,
+          address: v.owner_address,
+          lot: v.lot_numbers,
+          reference_id: v.id
+        };
+        // Flatten each motion into its own column
+        const res = v.resolutions || {};
+        const motionCols = {};
+        for (const [key, val] of Object.entries(res)) {
+          if (key === '_meta') continue;
+          if (val.subItems) {
+            for (const [sk, sv] of Object.entries(val.subItems)) {
+              motionCols[`${key}__${sk}`] = sv.vote;
+            }
+          } else {
+            motionCols[key] = val.vote || val.text || '';
+          }
+        }
+        return [{...base, ...motionCols}];
+      });
+
+    } else if (kind === 'audit') {
+      rows = currentData.audit.map(a => ({
+        created_at: a.created_at,
+        event_type: a.event_type,
+        plan: a.oc_plan_number,
+        summary: JSON.stringify(a.payload_summary),
+        submitter_ip: a.submitter_ip
+      }));
+
+    } else if (kind === 'tally') {
+      // Use same tally logic as renderTally
+      const tally = {};
+      for (const v of currentData.votes) {
+        const res = v.resolutions || {};
+        for (const [key, val] of Object.entries(res)) {
+          if (key === '_meta') continue;
+          if (val.subItems) {
+            if (!tally[key]) tally[key] = { title: val.title, subs: {} };
+            for (const [subKey, subVal] of Object.entries(val.subItems)) {
+              if (!tally[key].subs[subKey]) tally[key].subs[subKey] = { label: subVal.label, yes: 0, no: 0, abstain: 0 };
+              if (['yes', 'no', 'abstain'].includes(subVal.vote)) tally[key].subs[subKey][subVal.vote]++;
+            }
+          } else if (val.vote) {
+            if (!tally[key]) tally[key] = { title: val.title, yes: 0, no: 0, abstain: 0 };
+            if (['yes', 'no', 'abstain'].includes(val.vote)) tally[key][val.vote]++;
+          }
+        }
+      }
+      for (const [key, data] of Object.entries(tally)) {
+        if (data.subs) {
+          for (const sub of Object.values(data.subs)) {
+            rows.push({ motion: data.title + ' — ' + sub.label, yes: sub.yes, no: sub.no, abstain: sub.abstain, outcome: sub.yes > sub.no ? 'PASS' : sub.no > sub.yes ? 'FAIL' : 'TIED' });
+          }
+        } else {
+          rows.push({ motion: data.title, yes: data.yes, no: data.no, abstain: data.abstain, outcome: data.yes > data.no ? 'PASS' : data.no > data.yes ? 'FAIL' : 'TIED' });
+        }
+      }
+    }
+
+    if (rows.length === 0) {
+      alert('Nothing to export — current filter returns no rows.');
+      return;
+    }
+
+    // Build CSV
+    const headers = Array.from(new Set(rows.flatMap(r => Object.keys(r))));
+    const lines = [headers.join(',')];
+    for (const row of rows) {
+      lines.push(headers.map(h => {
+        const v = row[h];
+        if (v == null) return '';
+        const s = String(v).replace(/"/g, '""');
+        return /[",\n]/.test(s) ? `"${s}"` : s;
+      }).join(','));
+    }
+    const csv = lines.join('\n');
+
+    // Download
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  // Initialise
+  init();
+</script>
+
+</body>
+</html>
