@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a5f">
+<title>AGM Voting Sheet — RP3271 — MBCM Ringwood</title>
+<style>
+  :root {
+    --mbcm-navy: #1e3a5f;
+    --mbcm-blue: #2E75B6;
+    --mbcm-blue-soft: #EBF3FB;
+    --mbcm-gold: #c8a962;
+    --ink: #111827;
+    --ink-soft: #374151;
+    --muted: #6b7280;
+    --rule: #e5e7eb;
+    --bg: #ffffff;
+    --bg-soft: #f8fafc;
+    --success: #047857;
+    --success-bg: #d1fae5;
+    --error: #b91c1c;
+    --error-bg: #fee2e2;
+    --warn-bg: #fef3c7;
+    --warn-border: #f59e0b;
+    --yes-bg: #d1fae5;
+    --yes-border: #047857;
+    --no-bg: #fee2e2;
+    --no-border: #b91c1c;
+    --abstain-bg: #e5e7eb;
+    --abstain-border: #6b7280;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px; line-height: 1.6;
+    color: var(--ink); background: var(--bg-soft);
+    -webkit-font-smoothing: antialiased;
+  }
+  .topbar {
+    background: var(--mbcm-navy); color: #fff;
+    padding: 14px 16px;
+    padding-top: max(14px, env(safe-area-inset-top));
+    font-size: 14px; font-weight: 600;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    text-align: center;
+  }
+  .header-card {
+    background: #fff; margin: 16px; padding: 22px 20px;
+    border-radius: 12px;
+    border-top: 6px solid var(--mbcm-blue);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .header-card__eyebrow {
+    color: var(--mbcm-blue); font-size: 13px; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    margin: 0 0 6px 0;
+  }
+  .header-card__title {
+    font-size: 24px; line-height: 1.25; font-weight: 700;
+    color: var(--mbcm-navy); margin: 0 0 4px 0;
+  }
+  .header-card__meta {
+    font-size: 15px; color: var(--ink-soft); margin: 10px 0 0 0;
+  }
+  .header-card__meta strong { color: var(--mbcm-navy); }
+  .form-section {
+    background: #fff; margin: 16px; padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .form-section__title {
+    font-size: 18px; font-weight: 700;
+    color: var(--mbcm-navy); margin: 0 0 6px 0;
+  }
+  .form-section__hint {
+    font-size: 14px; color: var(--muted); margin: 0 0 16px 0;
+  }
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  label.field__label {
+    display: block; font-size: 15px; font-weight: 600;
+    color: var(--ink-soft); margin-bottom: 6px;
+  }
+  label.field__label .req { color: var(--error); }
+  input[type=text], input[type=number], textarea {
+    width: 100%; padding: 12px 14px;
+    font-size: 16px; font-family: inherit;
+    border: 1.5px solid var(--rule);
+    border-radius: 8px; background: #fff; color: var(--ink);
+    -webkit-appearance: none; appearance: none;
+  }
+  input:focus, textarea:focus {
+    outline: none; border-color: var(--mbcm-blue);
+    box-shadow: 0 0 0 3px rgba(46,117,182,0.15);
+  }
+  textarea { min-height: 80px; resize: vertical; }
+
+  /* Motion cards */
+  .motion {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .motion--heading {
+    background: var(--mbcm-blue-soft);
+    border-left: 4px solid var(--mbcm-blue);
+  }
+  .motion__number {
+    display: inline-block;
+    background: var(--mbcm-blue); color: #fff;
+    font-weight: 700; font-size: 13px;
+    min-width: 30px; height: 30px;
+    line-height: 30px; text-align: center;
+    border-radius: 50%; margin-right: 10px;
+    vertical-align: middle;
+  }
+  .motion__title {
+    font-weight: 700; color: var(--mbcm-navy);
+    font-size: 15px;
+    display: inline;
+    vertical-align: middle;
+  }
+  .motion__description {
+    font-size: 13px; color: var(--muted);
+    margin: 8px 0 14px 40px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .motion__sub {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--rule);
+  }
+  .motion__sub-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .motion__extra {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--rule);
+  }
+  .motion__extra-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+
+  .vote-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .vote-option {
+    display: flex; align-items: center; justify-content: center;
+    padding: 11px 6px;
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink-soft);
+    transition: all 0.15s;
+    text-align: center;
+    user-select: none;
+  }
+  .vote-option input { display: none; }
+  .vote-option:hover { border-color: var(--mbcm-blue); }
+  .vote-option--yes:has(input:checked) {
+    background: var(--yes-bg); border-color: var(--yes-border);
+    color: var(--yes-border);
+  }
+  .vote-option--no:has(input:checked) {
+    background: var(--no-bg); border-color: var(--no-border);
+    color: var(--no-border);
+  }
+  .vote-option--abstain:has(input:checked) {
+    background: var(--abstain-bg); border-color: var(--abstain-border);
+    color: var(--abstain-border);
+  }
+
+  /* Signature canvas */
+  .sig-wrap {
+    border: 2px dashed var(--mbcm-blue);
+    border-radius: 10px; background: #fff;
+    padding: 4px; position: relative;
+  }
+  canvas.signature-pad {
+    display: block; width: 100%; height: 180px;
+    background: #fff; border-radius: 6px;
+    cursor: crosshair; touch-action: none;
+    -ms-touch-action: none;
+    user-select: none; -webkit-user-select: none;
+  }
+  .sig-actions {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-top: 8px; font-size: 14px;
+  }
+  .sig-clear {
+    background: none; border: none;
+    color: var(--mbcm-blue); font-weight: 600;
+    cursor: pointer; padding: 8px 0;
+    font-size: 14px; text-decoration: underline;
+  }
+  .sig-hint { color: var(--muted); }
+
+  /* Privacy notice */
+  .privacy-box {
+    background: var(--warn-bg);
+    border-left: 4px solid var(--warn-border);
+    padding: 14px 16px; border-radius: 6px;
+    font-size: 14px; line-height: 1.55;
+    color: #713f12; margin-bottom: 16px;
+  }
+  .privacy-box strong { color: #78350f; }
+  .consent-row {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px; background: var(--mbcm-blue-soft);
+    border-radius: 8px; cursor: pointer;
+  }
+  .consent-row input[type=checkbox] {
+    margin-top: 3px; flex-shrink: 0;
+    width: 20px; height: 20px; accent-color: var(--mbcm-blue);
+  }
+  .consent-row label {
+    font-size: 15px; line-height: 1.45;
+    color: var(--ink-soft); cursor: pointer;
+  }
+  .consent-row label strong { color: var(--mbcm-navy); }
+
+  /* Submit */
+  .submit-wrap { margin: 24px 16px 32px; }
+  .submit-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 100%; min-height: 56px; padding: 14px 16px;
+    border: none; border-radius: 10px;
+    font-size: 18px; font-weight: 700;
+    background: var(--mbcm-gold); color: var(--mbcm-navy);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Sticky progress */
+  .progress {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    margin: 0;
+    padding: 12px 20px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-size: 14px;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--rule);
+  }
+  .progress strong { color: var(--mbcm-navy); font-size: 16px; }
+  .progress-bar {
+    height: 4px;
+    background: var(--rule);
+    border-radius: 2px;
+    overflow: hidden;
+    flex: 1;
+    margin: 0 12px;
+  }
+  .progress-bar__fill {
+    height: 100%;
+    background: var(--mbcm-blue);
+    width: 0%;
+    transition: width 0.2s;
+  }
+
+  /* Status + success */
+  .status {
+    margin: 16px; padding: 16px;
+    border-radius: 10px;
+    font-size: 15px; line-height: 1.5;
+  }
+  .status--error {
+    background: var(--error-bg);
+    border-left: 4px solid var(--error);
+    color: #7f1d1d;
+  }
+  .status[hidden] { display: none; }
+  .success-screen {
+    padding: 40px 24px; text-align: center;
+  }
+  .success-screen[hidden] { display: none; }
+  .success-screen__tick {
+    font-size: 54px; color: var(--success); margin-bottom: 12px;
+  }
+  .success-screen__title {
+    font-size: 24px; color: var(--mbcm-navy);
+    font-weight: 700; margin: 0 0 8px 0;
+  }
+  .success-screen__body {
+    font-size: 16px; color: var(--ink-soft);
+    max-width: 480px; margin: 0 auto;
+  }
+  .success-screen__ref {
+    display: inline-block; margin-top: 16px;
+    padding: 10px 14px; background: var(--mbcm-blue-soft);
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px; color: var(--mbcm-navy);
+    word-break: break-all;
+  }
+
+  .footer {
+    background: var(--mbcm-navy); color: #fff;
+    padding: 20px 16px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    text-align: center; font-size: 14px; opacity: 0.95;
+  }
+  .footer a { color: #fff; }
+
+  .loading-dot {
+    display: inline-block; width: 8px; height: 8px;
+    border-radius: 50%; background: currentColor;
+    margin: 0 2px; animation: pulse 1s infinite ease-in-out;
+  }
+  .loading-dot:nth-child(2) { animation-delay: 0.15s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  @media (min-width: 600px) {
+    .header-card, .form-section, .submit-wrap, .status {
+      max-width: 640px;
+      margin-left: auto; margin-right: auto;
+    }
+    .progress > div { max-width: 640px; margin: 0 auto; width: 100%; display: flex; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">MBCM Strata Specialists Ringwood</div>
+
+<main id="main-form">
+
+  <section class="header-card">
+    <p class="header-card__eyebrow">AGM Voting Sheet</p>
+    <h1 class="header-card__title">Cast Your Vote</h1>
+    <p class="header-card__meta">
+      <strong>Plan No.:</strong> <span id="meta-oc">—</span><br>
+      <strong>Meeting Date:</strong> <span id="meta-meeting">—</span>
+    </p>
+  </section>
+
+  <div class="progress">
+    <div>
+      <span>Progress:</span>
+      <div class="progress-bar"><div class="progress-bar__fill" id="progress-fill"></div></div>
+      <strong><span id="progress-count">0</span>/<span id="progress-total">0</span></strong>
+    </div>
+  </div>
+
+  <div id="status-area" class="status status--error" hidden></div>
+
+  <form id="vote-form" novalidate>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Your Details</h2>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field__label" for="first-name">First name <span class="req">*</span></label>
+          <input type="text" id="first-name" name="first-name" autocomplete="given-name" required>
+        </div>
+        <div class="field">
+          <label class="field__label" for="last-name">Last name <span class="req">*</span></label>
+          <input type="text" id="last-name" name="last-name" autocomplete="family-name" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="address-1">Street address (line 1) <span class="req">*</span></label>
+        <input type="text" id="address-1" name="address-1" autocomplete="address-line1" required>
+      </div>
+      <div class="field">
+        <label class="field__label" for="address-2">Street address (line 2)</label>
+        <input type="text" id="address-2" name="address-2" autocomplete="address-line2">
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field__label" for="city">City <span class="req">*</span></label>
+          <input type="text" id="city" name="city" autocomplete="address-level2" required>
+        </div>
+        <div class="field">
+          <label class="field__label" for="state">State <span class="req">*</span></label>
+          <input type="text" id="state" name="state" value="VIC" autocomplete="address-level1" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="postcode">Postcode <span class="req">*</span></label>
+        <input type="text" id="postcode" name="postcode" autocomplete="postal-code" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="lot-numbers">Being the owner(s) of lot(s) <span class="req">*</span></label>
+        <textarea id="lot-numbers" name="lot-numbers" placeholder="e.g. Lot 3, or Lots 1 & 2" required></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="proxy-to">Authorised Name of Proxy (if applicable)</label>
+        <textarea id="proxy-to" name="proxy-to" placeholder="Leave blank if not using a proxy"></textarea>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Resolutions</h2>
+      <p class="form-section__hint">Mark Yes, No, or Abstain on each motion.</p>
+      <div id="motions-container"></div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Your Signature <span class="req" style="color:var(--error)">*</span></h2>
+      <p class="form-section__hint">Sign below using your finger, stylus, or mouse.</p>
+      <div class="sig-wrap">
+        <canvas id="sig" class="signature-pad"></canvas>
+      </div>
+      <div class="sig-actions">
+        <span class="sig-hint">Draw your signature above</span>
+        <button type="button" class="sig-clear" id="sig-clear">Clear</button>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Privacy &amp; Consent</h2>
+      <div class="privacy-box">
+        <strong>Privacy notice.</strong> The information you submit on this form is collected by MBCM Strata Specialists Ringwood for the purpose of recording your vote under the Owners Corporations Act 2006 (Vic). Data is stored in Australia and retained for 12 months in accordance with Regulation 8 of the Owners Corporations Regulations 2018. Your IP address, browser, and timestamp are recorded as part of the audit trail.
+      </div>
+      <div class="consent-row">
+        <input type="checkbox" id="consent" name="consent" required>
+        <label for="consent">
+          <strong>I consent</strong> to submitting this vote electronically and confirm the information above is accurate.
+        </label>
+      </div>
+    </section>
+
+    <div class="submit-wrap">
+      <button type="submit" class="submit-btn" id="submit-btn">
+        <span id="submit-label">Submit Vote</span>
+      </button>
+    </div>
+
+  </form>
+
+</main>
+
+<section class="success-screen" id="success-screen" hidden>
+  <div class="success-screen__tick" aria-hidden="true">✓</div>
+  <h2 class="success-screen__title">Vote Received</h2>
+  <p class="success-screen__body">
+    Thank you. Your vote has been lodged with MBCM Strata Specialists Ringwood and will be counted at the meeting.
+  </p>
+  <p class="success-screen__body">
+    A confirmation will be emailed to you shortly. For questions contact our office on 03 9873 0385 or
+    <a href="mailto:info@ringwood.mbcm.com.au">info@ringwood.mbcm.com.au</a>.
+  </p>
+  <div class="success-screen__ref" id="success-ref"></div>
+</section>
+
+<footer class="footer">
+  MBCM Strata Specialists Ringwood &middot; Suite 15, 50 New Street, Ringwood VIC 3134<br>
+  <a href="tel:0398730385">03 9873 0385</a> &middot;
+  <a href="mailto:info@ringwood.mbcm.com.au">info@ringwood.mbcm.com.au</a>
+</footer>
+
+<script>
+  // ==========================================================
+  // CONFIG
+  // ==========================================================
+  const SUPABASE_URL = 'https://trysksaprnuuxsqcoiwu.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_P0gogOaydZPReJYlwhqJMA_S6jd_Qko';
+
+  // ==========================================================
+  // MOTIONS — tailored to RP3271 AGM on 29 April 2026
+  // All amounts, dates, and references pulled from the agenda PDF
+  // ==========================================================
+  const MOTIONS = [
+    { num: 1, id: 'chairperson_conduct', type: 'vote',
+      title: 'Accept that the Chairperson will conduct the meeting in accordance with the Owners Corporations Act 2006 and the Owners Corporations and Other Amendments Act 2021' },
+
+    { num: 2, id: 'voting_form_quorum', type: 'vote',
+      title: 'Accept that this voting form (in conjunction with a directed proxy) represents my attendance at the AGM and will count toward the quorum' },
+
+    { num: 3, id: 'previous_minutes', type: 'vote',
+      title: 'Accept the Minutes of the previous AGM held on 24 April 2025 as a true and accurate record' },
+
+    { num: 4, id: 'managers_report', type: 'vote',
+      title: "Accept the Manager's Report as presented" },
+
+    { num: 5, id: 'committee_report', type: 'vote',
+      title: 'Accept the Committee Report as presented' },
+
+    { num: 6, id: 'standing_resolutions', type: 'vote',
+      title: 'Adopt the Standing Resolutions as presented',
+      description: 'Includes: gutter cleaning by owners, grievance committee = all members, no asbestos survey, no maintenance plan, no financial audit required, $55 final fee notice admin charge, debt recovery at 28 days after Final Notice.' },
+
+    { num: 7, id: 'acknowledge_complaints', type: 'vote',
+      title: 'Acknowledge the report on Complaints, Debt Recovery (VCAT), Building Orders and/or Notices for the year ended 31 March 2026',
+      description: 'No complaints reported, no VCAT applications, 0 Final Fee Notices, 0 Breach Notices.' },
+
+    { num: 8, id: 'ohs_inspection', type: 'vote',
+      title: 'Undertake an OH&S Inspection Report',
+      description: 'No previous OH&S inspection has been undertaken for this property. The OC may resolve to commission one.' },
+
+    { num: 9, id: 'insurance_report_header', type: 'heading',
+      title: 'INSURANCE REPORT',
+      description: 'Current policy: Strata Community Insurance via Honan Brokers (policy POL11059596). Building Sum $7,546,162. Legal Liability $30,000,000. Office Bearers $5,000,000. Renewal 01/06/2026. Last valuation 23/03/2023 at $7,110,000. Excess $1,500.' },
+
+    { num: 10, id: 'insurance_valuation', type: 'vote',
+      title: 'Obtain an insurance valuation and renew the policy to the recommended building sum insured amount' },
+
+    { num: 11, id: 'building_sum_retain', type: 'vote-with-amount',
+      title: 'Retain the current Building Sum insured amount of $7,546,162',
+      amountLabel: 'If no, enter the proposed amount ($):' },
+
+    { num: 12, id: 'insurance_direct_insurer', type: 'vote',
+      title: 'Accept the Insurance Policy directly through the Insurer' },
+
+    { num: 13, id: 'insurance_broker', type: 'vote',
+      title: 'Accept the Insurance Policy directly through a Strata Specialist Insurance Broker' },
+
+    { num: 14, id: 'insurance_quotations', type: 'vote',
+      title: 'Obtain quotations for Insurance' },
+
+    { num: 15, id: 'legal_liability', type: 'multi',
+      title: 'Legal Liability Cover',
+      description: 'Current insured: $30,000,000. Act minimum: $20,000,000.',
+      subItems: [
+        { id: 'retain', label: 'Retain the Legal Liability cover of $30,000,000' },
+        { id: 'increase', label: 'Increase the Legal Liability cover above $30,000,000' }
+      ] },
+
+    { num: 16, id: 'office_bearers', type: 'multi',
+      title: 'Office Bearers Cover',
+      description: 'Current insured: $5,000,000. Act minimum: $100,000.',
+      subItems: [
+        { id: 'retain', label: 'Retain the Office Bearers cover of $5,000,000' },
+        { id: 'increase', label: 'Increase the Office Bearers cover above $5,000,000' }
+      ] },
+
+    { num: 17, id: 'gardener', type: 'vote',
+      title: 'Continue with the current Gardener and scope' },
+
+    { num: 18, id: 'caretaker', type: 'vote',
+      title: 'Continue with the current Caretaker and scope (if applicable)' },
+
+    { num: 19, id: 'general_business', type: 'textarea',
+      title: 'General Business (if applicable)',
+      description: 'The agenda lists no General Business items. Add any items you would like raised at the AGM.' },
+
+    { num: 20, id: 'financial_statements', type: 'vote',
+      title: 'Accept the Annual Financial Statement for the year ending 31 March 2026 as presented',
+      description: 'Receipts $21,690.15, payments $28,279.49, deficit for year of $6,589.34, accumulated funds $5,903.14.' },
+
+    { num: 21, id: 'administrative_budget', type: 'vote-with-amount',
+      title: 'Adopt the administrative budget of $23,360.00 for the year ending 31 March 2027 and levy Lot Owners based on Lot Liability',
+      amountLabel: 'If no, enter the proposed amount ($):',
+      defaultAmount: '23360.00' },
+
+    { num: 22, id: 'election_committee', type: 'vote-with-name',
+      title: 'Elect a Committee for the Owners Corporation',
+      description: 'Delegated powers to the committee.',
+      nameLabel: 'Name(s) of committee member(s):' },
+
+    { num: 23, id: 'reappoint_mbcm', type: 'vote',
+      title: 'Re-appoint MBCM Ringwood as Manager for a 24-month period under the SCA Contract of Appointment' }
+  ];
+
+  // ==========================================================
+  // URL params → OC + meeting
+  // ==========================================================
+  const params = new URLSearchParams(location.search);
+  const oc = params.get('oc') || '';
+  const meeting = params.get('meeting') || '';
+  document.getElementById('meta-oc').textContent = oc || '—';
+  document.getElementById('meta-meeting').textContent = meeting ? formatDate(meeting) : '—';
+
+  function formatDate(iso) {
+    try {
+      const d = new Date(iso);
+      if (isNaN(d)) return iso;
+      return d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    } catch { return iso; }
+  }
+
+  // ==========================================================
+  // Render motions
+  // ==========================================================
+  const container = document.getElementById('motions-container');
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function voteRow(name) {
+    return `
+      <div class="vote-options">
+        <label class="vote-option vote-option--yes">
+          <input type="radio" name="${name}" value="yes" required> Yes
+        </label>
+        <label class="vote-option vote-option--no">
+          <input type="radio" name="${name}" value="no"> No
+        </label>
+        <label class="vote-option vote-option--abstain">
+          <input type="radio" name="${name}" value="abstain"> Abstain
+        </label>
+      </div>`;
+  }
+
+  function renderMotion(m) {
+    const card = document.createElement('div');
+    card.className = 'motion' + (m.type === 'heading' ? ' motion--heading' : '');
+
+    let html = `
+      <div>
+        <span class="motion__number">${m.num}</span>
+        <span class="motion__title">${esc(m.title)}</span>
+      </div>`;
+
+    if (m.description) {
+      html += `<p class="motion__description">${esc(m.description)}</p>`;
+    }
+
+    if (m.type === 'vote') {
+      html += voteRow(`motion_${m.id}`);
+
+    } else if (m.type === 'vote-with-amount') {
+      html += voteRow(`motion_${m.id}`);
+      html += `
+        <div class="motion__extra">
+          <label class="motion__extra-label" for="amount_${m.id}">${esc(m.amountLabel)}</label>
+          <input type="text" inputmode="decimal" id="amount_${m.id}" name="amount_${m.id}"
+            value="${esc(m.defaultAmount || '')}" placeholder="0.00">
+        </div>`;
+
+    } else if (m.type === 'vote-with-name') {
+      html += voteRow(`motion_${m.id}`);
+      html += `
+        <div class="motion__extra">
+          <label class="motion__extra-label" for="name_${m.id}">${esc(m.nameLabel)}</label>
+          <input type="text" id="name_${m.id}" name="name_${m.id}" placeholder="Full name">
+        </div>`;
+
+    } else if (m.type === 'multi') {
+      for (const sub of m.subItems) {
+        const name = `motion_${m.id}_${sub.id}`;
+        html += `
+          <div class="motion__sub">
+            <div class="motion__sub-label">${esc(sub.label)}</div>
+            ${voteRow(name)}
+          </div>`;
+      }
+
+    } else if (m.type === 'textarea') {
+      html += `
+        <textarea id="text_${m.id}" name="text_${m.id}" placeholder="Leave blank if none"></textarea>`;
+    }
+    // heading: no input
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  }
+
+  MOTIONS.forEach(renderMotion);
+
+  // Count required votes (excludes heading + textarea)
+  const requiredVoteNames = [];
+  MOTIONS.forEach(m => {
+    if (m.type === 'vote' || m.type === 'vote-with-amount' || m.type === 'vote-with-name') {
+      requiredVoteNames.push(`motion_${m.id}`);
+    } else if (m.type === 'multi') {
+      m.subItems.forEach(sub => requiredVoteNames.push(`motion_${m.id}_${sub.id}`));
+    }
+  });
+
+  document.getElementById('progress-total').textContent = requiredVoteNames.length;
+  const progressCount = document.getElementById('progress-count');
+  const progressFill = document.getElementById('progress-fill');
+
+  document.addEventListener('change', () => {
+    let done = 0;
+    requiredVoteNames.forEach(n => {
+      if (document.querySelector(`input[name="${n}"]:checked`)) done++;
+    });
+    progressCount.textContent = done;
+    progressFill.style.width = (done / requiredVoteNames.length * 100).toFixed(1) + '%';
+  });
+
+  // ==========================================================
+  // Signature pad
+  // ==========================================================
+  const sigCanvas = document.getElementById('sig');
+  const sigCtx = sigCanvas.getContext('2d');
+  sigCanvas.width = 800;
+  sigCanvas.height = 180;
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+  sigCtx.strokeStyle = '#1e3a5f';
+  sigCtx.fillStyle = '#1e3a5f';
+
+  let sigDrawing = false;
+  let sigHasData = false;
+
+  function sigPos(e) {
+    const rect = sigCanvas.getBoundingClientRect();
+    const scaleX = sigCanvas.width / rect.width;
+    const scaleY = sigCanvas.height / rect.height;
+    const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+    const cx = t ? t.clientX : e.clientX;
+    const cy = t ? t.clientY : e.clientY;
+    return { x: (cx - rect.left) * scaleX, y: (cy - rect.top) * scaleY };
+  }
+  function sigBegin(e) {
+    e.preventDefault();
+    sigDrawing = true;
+    const p = sigPos(e);
+    sigCtx.beginPath();
+    sigCtx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+    sigCtx.fill();
+    sigCtx.beginPath();
+    sigCtx.moveTo(p.x, p.y);
+    sigHasData = true;
+  }
+  function sigMove(e) {
+    if (!sigDrawing) return;
+    e.preventDefault();
+    const p = sigPos(e);
+    sigCtx.lineTo(p.x, p.y);
+    sigCtx.stroke();
+  }
+  function sigEnd() { sigDrawing = false; }
+
+  sigCanvas.addEventListener('mousedown', sigBegin);
+  sigCanvas.addEventListener('mousemove', sigMove);
+  sigCanvas.addEventListener('mouseup', sigEnd);
+  sigCanvas.addEventListener('mouseleave', sigEnd);
+  sigCanvas.addEventListener('touchstart', sigBegin, { passive: false });
+  sigCanvas.addEventListener('touchmove', sigMove, { passive: false });
+  sigCanvas.addEventListener('touchend', sigEnd);
+
+  document.getElementById('sig-clear').addEventListener('click', () => {
+    sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    sigHasData = false;
+  });
+
+  // ==========================================================
+  // Submit
+  // ==========================================================
+  const form = document.getElementById('vote-form');
+  const statusArea = document.getElementById('status-area');
+  const submitBtn = document.getElementById('submit-btn');
+  const submitLabel = document.getElementById('submit-label');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusArea.hidden = true;
+
+    if (!oc || !meeting) {
+      showError('This form is missing the OC plan number or meeting date in the URL. Please use the link provided in your AGM notice.');
+      return;
+    }
+
+    const data = new FormData(form);
+
+    // Collect resolutions across all motion types
+    const resolutions = {};
+
+    for (const m of MOTIONS) {
+      if (m.type === 'vote') {
+        const v = data.get(`motion_${m.id}`);
+        if (!v) {
+          showError(`Please answer motion ${m.num}: ${m.title}`);
+          return;
+        }
+        resolutions[m.id] = { title: m.title, vote: v };
+
+      } else if (m.type === 'vote-with-amount') {
+        const v = data.get(`motion_${m.id}`);
+        if (!v) {
+          showError(`Please answer motion ${m.num}: ${m.title}`);
+          return;
+        }
+        resolutions[m.id] = {
+          title: m.title,
+          vote: v,
+          amount: (data.get(`amount_${m.id}`) || '').trim() || null
+        };
+
+      } else if (m.type === 'vote-with-name') {
+        const v = data.get(`motion_${m.id}`);
+        if (!v) {
+          showError(`Please answer motion ${m.num}: ${m.title}`);
+          return;
+        }
+        resolutions[m.id] = {
+          title: m.title,
+          vote: v,
+          name: (data.get(`name_${m.id}`) || '').trim() || null
+        };
+
+      } else if (m.type === 'multi') {
+        const subResults = {};
+        for (const sub of m.subItems) {
+          const v = data.get(`motion_${m.id}_${sub.id}`);
+          if (!v) {
+            showError(`Please answer motion ${m.num} (${sub.label})`);
+            return;
+          }
+          subResults[sub.id] = { label: sub.label, vote: v };
+        }
+        resolutions[m.id] = { title: m.title, subItems: subResults };
+
+      } else if (m.type === 'textarea') {
+        resolutions[m.id] = {
+          title: m.title,
+          text: (data.get(`text_${m.id}`) || '').trim() || null
+        };
+      }
+      // heading: not stored
+    }
+
+    if (!sigHasData) {
+      showError('Please sign in the signature box above before submitting.');
+      return;
+    }
+    if (!data.get('consent')) {
+      showError('Please tick the consent checkbox to submit.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitLabel.innerHTML = 'Submitting <span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>';
+
+    // Build address string from parts
+    const addressParts = [
+      data.get('address-1')?.trim(),
+      data.get('address-2')?.trim(),
+      data.get('city')?.trim(),
+      data.get('state')?.trim(),
+      data.get('postcode')?.trim()
+    ].filter(Boolean);
+    const addressFull = addressParts.join(', ');
+
+    // Proxy name (if supplied) goes into the resolutions meta block
+    const proxyName = (data.get('proxy-to') || '').trim();
+    resolutions._meta = {
+      proxy_authorised_to: proxyName || null,
+      motion_count: requiredVoteNames.length
+    };
+
+    let ip = null;
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+      if (ipRes.ok) ip = (await ipRes.json()).ip;
+    } catch (_) { /* ignore */ }
+
+    const submissionId = (crypto.randomUUID && crypto.randomUUID()) ||
+      ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      }));
+
+    const payload = {
+      id: submissionId,
+      oc_plan_number: oc,
+      meeting_date: meeting,
+      owner_name_first: data.get('first-name')?.trim(),
+      owner_name_last: data.get('last-name')?.trim(),
+      owner_address: addressFull,
+      lot_numbers: data.get('lot-numbers')?.trim(),
+      resolutions: resolutions,
+      signature_data: sigCanvas.toDataURL('image/png'),
+      consent_to_electronic: true,
+      submitter_ip: ip,
+      submitter_user_agent: navigator.userAgent
+    };
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/votes`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        await logAudit('vote_failed', { reason: res.status, body: text.slice(0, 500) }, ip);
+        showError('Your vote could not be submitted. Please check the details and try again, or call our office on 03 9873 0385.');
+        submitBtn.disabled = false;
+        submitLabel.textContent = 'Submit Vote';
+        return;
+      }
+
+      await logAudit('vote_submitted', { id: submissionId, motions: requiredVoteNames.length }, ip);
+
+      document.getElementById('main-form').hidden = true;
+      const successScreen = document.getElementById('success-screen');
+      successScreen.hidden = false;
+      document.getElementById('success-ref').textContent = 'Reference: ' + submissionId;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      await logAudit('vote_failed', { reason: 'network', message: String(err).slice(0, 500) }, ip);
+      showError('Network error. Please check your connection and try again.');
+      submitBtn.disabled = false;
+      submitLabel.textContent = 'Submit Vote';
+    }
+  });
+
+  function showError(msg) {
+    statusArea.textContent = msg;
+    statusArea.hidden = false;
+    statusArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  async function logAudit(eventType, summary, ip) {
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/audit_log`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          event_type: eventType,
+          oc_plan_number: oc,
+          payload_summary: summary,
+          submitter_ip: ip,
+          submitter_user_agent: navigator.userAgent
+        })
+      });
+    } catch (_) { /* best-effort only */ }
+  }
+</script>
+
+</body>
+</html>
