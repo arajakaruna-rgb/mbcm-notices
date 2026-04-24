@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a5f">
+<title>AGM Notice — 38 Nelson Street, Ringwood</title>
+<style>
+  :root {
+    --mbcm-navy: #1e3a5f;
+    --mbcm-blue: #2E75B6;
+    --mbcm-blue-soft: #EBF3FB;
+    --mbcm-gold: #c8a962;
+    --ink: #111827;
+    --ink-soft: #374151;
+    --muted: #6b7280;
+    --rule: #e5e7eb;
+    --bg: #ffffff;
+    --bg-soft: #f8fafc;
+    --success: #047857;
+    --warn-bg: #fef3c7;
+    --warn-border: #f59e0b;
+  }
+
+  * { box-sizing: border-box; }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--bg-soft);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Sticky action header */
+  .sticky-actions {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--mbcm-navy);
+    padding: 12px 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+
+  .sticky-actions__brand {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: center;
+    opacity: 0.9;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 56px;
+    padding: 14px 16px;
+    margin-bottom: 8px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .action-btn:active { transform: scale(0.98); }
+
+  .action-btn--primary {
+    background: var(--mbcm-gold);
+    color: var(--mbcm-navy);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .action-btn--secondary {
+    background: #fff;
+    color: var(--mbcm-navy);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .action-btn__icon {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+
+  .action-btn:last-child { margin-bottom: 0; }
+
+  /* Header card */
+  .header-card {
+    background: #fff;
+    margin: 16px;
+    padding: 24px 20px;
+    border-radius: 12px;
+    border-top: 6px solid var(--mbcm-blue);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .header-card__eyebrow {
+    color: var(--mbcm-blue);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin: 0 0 8px 0;
+  }
+
+  .header-card__title {
+    font-size: 26px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--mbcm-navy);
+    margin: 0 0 6px 0;
+  }
+
+  .header-card__address {
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin: 0 0 16px 0;
+  }
+
+  .header-card__date-notice {
+    font-size: 15px;
+    color: var(--muted);
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* Meeting details panel */
+  .meeting-panel {
+    background: var(--mbcm-blue-soft);
+    margin: 16px;
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid var(--mbcm-blue);
+  }
+
+  .meeting-panel__label {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--mbcm-blue);
+    margin-bottom: 12px;
+  }
+
+  .meeting-panel__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(46, 117, 182, 0.15);
+    gap: 12px;
+  }
+
+  .meeting-panel__row:last-child { border-bottom: none; }
+
+  .meeting-panel__key {
+    font-size: 15px;
+    color: var(--ink-soft);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .meeting-panel__value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--mbcm-navy);
+    text-align: right;
+    word-break: break-word;
+  }
+
+  /* Section cards */
+  .section {
+    background: #fff;
+    margin: 16px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+
+  .section__header {
+    width: 100%;
+    padding: 18px 20px;
+    background: #fff;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--mbcm-navy);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .section__header[aria-expanded="true"] {
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section__chevron {
+    color: var(--mbcm-blue);
+    font-size: 22px;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 12px;
+  }
+
+  .section__header[aria-expanded="true"] .section__chevron {
+    transform: rotate(180deg);
+  }
+
+  .section__body {
+    padding: 0 20px 20px 20px;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  .section__body[hidden] { display: none; }
+
+  .section__body h3 {
+    font-size: 17px;
+    color: var(--mbcm-navy);
+    margin: 20px 0 8px 0;
+  }
+
+  .section__body p { margin: 0 0 12px 0; }
+  .section__body ol, .section__body ul { padding-left: 22px; margin: 0 0 12px 0; }
+  .section__body li { margin-bottom: 10px; }
+
+  /* Agenda items */
+  .agenda-item {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .agenda-item:last-child { border-bottom: none; }
+
+  .agenda-item__number {
+    display: inline-block;
+    background: var(--mbcm-blue);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    min-width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    margin-right: 12px;
+  }
+
+  .agenda-item__title {
+    font-weight: 700;
+    color: var(--mbcm-navy);
+    font-size: 18px;
+    display: inline;
+  }
+
+  .agenda-item__body {
+    margin-top: 8px;
+    padding-left: 44px;
+    font-size: 16px;
+    color: var(--ink-soft);
+  }
+
+  /* Data tables (budget, insurance) */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 16px;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 10px 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .data-table th {
+    background: var(--mbcm-blue-soft);
+    color: var(--mbcm-navy);
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  .data-table td.num,
+  .data-table th.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .data-table tr.total td {
+    border-top: 2px solid var(--mbcm-navy);
+    font-weight: 700;
+    color: var(--mbcm-navy);
+  }
+
+  /* Highlight box for unit fees */
+  .fees-highlight {
+    background: linear-gradient(135deg, #fff 0%, var(--mbcm-blue-soft) 100%);
+    border: 2px solid var(--mbcm-blue);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 12px 0;
+  }
+
+  .fees-highlight__label {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--mbcm-blue);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .fees-highlight__amount {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--mbcm-navy);
+    line-height: 1.2;
+  }
+
+  .fees-highlight__detail {
+    font-size: 15px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* Proxy notice */
+  .notice-box {
+    background: var(--warn-bg);
+    border-left: 4px solid var(--warn-border);
+    padding: 14px 16px;
+    margin: 12px 0;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+
+  .notice-box__title {
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 4px;
+  }
+
+  /* Contact footer */
+  .contact-footer {
+    background: var(--mbcm-navy);
+    color: #fff;
+    padding: 24px 20px;
+    margin-top: 24px;
+    text-align: center;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
+  }
+
+  .contact-footer h3 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+  }
+
+  .contact-footer a {
+    color: #fff;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .contact-footer__detail {
+    font-size: 16px;
+    margin: 4px 0;
+    opacity: 0.9;
+  }
+
+  .contact-footer__legal {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    font-size: 13px;
+    opacity: 0.7;
+  }
+
+  /* Download PDF button */
+  .pdf-download {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    margin: 16px;
+    padding: 14px 20px;
+    background: #fff;
+    color: var(--mbcm-navy);
+    border: 2px solid var(--mbcm-blue);
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* Skip to content */
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+  }
+  .skip-link:focus {
+    position: static;
+    display: block;
+    padding: 10px;
+    background: var(--mbcm-gold);
+    color: var(--mbcm-navy);
+    font-weight: 700;
+  }
+
+  /* Respect user font size preferences */
+  @media (min-width: 600px) {
+    .header-card, .meeting-panel, .section, .pdf-download {
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .sticky-actions > div { max-width: 560px; margin: 0 auto; }
+    .contact-footer > div { max-width: 560px; margin: 0 auto; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- Sticky action header -->
+<header class="sticky-actions" role="banner">
+  <div>
+    <div class="sticky-actions__brand">MBCM Strata Specialists Ringwood</div>
+    <a href="https://us02web.zoom.us/j/89746666556?pwd=sUISMZa7xAiWhNaukVJbWzCJgslLml.1" class="action-btn action-btn--primary" aria-label="Join Zoom meeting">
+      <span class="action-btn__icon" aria-hidden="true">▶</span>
+      Join Zoom Meeting
+    </a>
+    <a href="tel:+61370182005" class="action-btn action-btn--secondary" aria-label="Call meeting by phone">
+      <span class="action-btn__icon" aria-hidden="true">☎</span>
+      Call by Phone
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- Title card -->
+  <section class="header-card" aria-labelledby="notice-title">
+    <p class="header-card__eyebrow">Notice of Annual General Meeting</p>
+    <h1 id="notice-title" class="header-card__title">Owners Corporation 1 Plan No. RP6474</h1>
+    <p class="header-card__address">38 Nelson Street, Ringwood VIC 3134</p>
+    <div class="header-card__date-notice">
+      <strong>Date of Notice:</strong> 21 April 2026<br>
+      <strong>Issued under:</strong> Section 72, Owners Corporations and Other Acts Amendments Act 2021
+    </div>
+  </section>
+
+  <!-- Meeting details -->
+  <section class="meeting-panel" aria-labelledby="meeting-label">
+    <div id="meeting-label" class="meeting-panel__label">Meeting Details</div>
+    <div class="meeting-panel__row">
+      <span class="meeting-panel__key">Date</span>
+      <span class="meeting-panel__value">Fri, 6 May 2026</span>
+    </div>
+    <div class="meeting-panel__row">
+      <span class="meeting-panel__key">Time</span>
+      <span class="meeting-panel__value">3:00 PM</span>
+    </div>
+    <div class="meeting-panel__row">
+      <span class="meeting-panel__key">Format</span>
+      <span class="meeting-panel__value">Online via Zoom</span>
+    </div>
+    <div class="meeting-panel__row">
+      <span class="meeting-panel__key">Meeting ID</span>
+      <span class="meeting-panel__value">897 4666 6556</span>
+    </div>
+    <div class="meeting-panel__row">
+      <span class="meeting-panel__key">Password</span>
+      <span class="meeting-panel__value">190633</span>
+    </div>
+    <div class="meeting-panel__row">
+      <span class="meeting-panel__key">Duration</span>
+      <span class="meeting-panel__value">1 hour</span>
+    </div>
+  </section>
+
+  <!-- Agenda (expanded by default) -->
+  <section class="section">
+    <button class="section__header" aria-expanded="true" aria-controls="sec-agenda" onclick="toggleSection(this)">
+      <span>📋 Meeting Agenda</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-agenda">
+
+      <div class="agenda-item">
+        <span class="agenda-item__number">1</span>
+        <span class="agenda-item__title">General</span>
+        <div class="agenda-item__body">
+          Appointment of Chairperson. Apologies, proxies, quorum and entitlement to vote. Acceptance of previous AGM minutes from 6 May 2025.
+        </div>
+      </div>
+
+      <div class="agenda-item">
+        <span class="agenda-item__number">2</span>
+        <span class="agenda-item__title">Reports</span>
+        <div class="agenda-item__body">
+          Manager's Report, Standing Resolutions, complaints and debt recovery. Resolution to undertake a new OH&amp;S Inspection Report (last inspection: not undertaken).
+        </div>
+      </div>
+
+      <div class="agenda-item">
+        <span class="agenda-item__number">3</span>
+        <span class="agenda-item__title">Insurance</span>
+        <div class="agenda-item__body">
+          Current insurer: <strong>CHU Underwriting Agencies</strong> via Honan Insurance Brokers. Building sum insured: $1,422,624. Renewal 5 September 2026. Owners will decide whether to renew, obtain a new valuation, or seek alternative quotes.
+        </div>
+      </div>
+
+      <div class="agenda-item">
+        <span class="agenda-item__number">4</span>
+        <span class="agenda-item__title">General Business</span>
+        <div class="agenda-item__body">
+          The 2025 AGM noted an agenda item to obtain an OH&S report (covered by motion 2d of this agenda). Open floor for further items raised by owners.
+        </div>
+      </div>
+
+      <div class="agenda-item">
+        <span class="agenda-item__number">5</span>
+        <span class="agenda-item__title">Financials</span>
+        <div class="agenda-item__body">
+          Acceptance of financial statements for year ending 31 March 2026. Adoption of budget for year ending 31 March 2027: <strong>$7,222.00</strong>. See your unit fees below.
+        </div>
+      </div>
+
+      <div class="agenda-item">
+        <span class="agenda-item__number">6</span>
+        <span class="agenda-item__title">Owners Corporation Management</span>
+        <div class="agenda-item__body">
+          Election of Chairperson. Reappointment of MBCM Ringwood as Manager for a 24-month period under the SCA Contract of Appointment.
+        </div>
+      </div>
+
+      <div class="agenda-item">
+        <span class="agenda-item__number">7</span>
+        <span class="agenda-item__title">Closure of Meeting</span>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Unit fees for 2027 -->
+  <section class="section">
+    <button class="section__header" aria-expanded="true" aria-controls="sec-fees" onclick="toggleSection(this)">
+      <span>💰 Your Unit Fees (2027)</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-fees">
+      <p>The proposed 2027 annual fees have been set by the budget resolution. Fees are levied quarterly.</p>
+
+      <div class="fees-highlight">
+        <div class="fees-highlight__label">Units 1, 2, 3, 4</div>
+        <div class="fees-highlight__amount">$1,805.50 per year</div>
+        <div class="fees-highlight__detail">4 × $451.38 quarterly</div>
+      </div>
+
+      <p style="font-size: 15px; color: var(--muted); margin-top: 16px;">
+        Fee amounts are based on lot liability. Total budget: $7,222.00.
+      </p>
+    </div>
+  </section>
+
+  <!-- Financial summary -->
+  <section class="section">
+    <button class="section__header" aria-expanded="false" aria-controls="sec-financials" onclick="toggleSection(this)">
+      <span>📊 Financial Summary</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-financials" hidden>
+
+      <h3>Year ending 31 March 2026</h3>
+      <table class="data-table">
+        <tbody>
+          <tr>
+            <td>Total receipts</td>
+            <td class="num">$7,245.90</td>
+          </tr>
+          <tr>
+            <td>Total payments</td>
+            <td class="num">$7,054.56</td>
+          </tr>
+          <tr class="total">
+            <td>Surplus for year</td>
+            <td class="num">$191.34</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Balance Sheet</h3>
+      <table class="data-table">
+        <tbody>
+          <tr><td>Cash at bank</td><td class="num">$5,951.51</td></tr>
+          <tr><td>OC fees owing</td><td class="num">$451.40</td></tr>
+          <tr><td>OC fees paid in advance</td><td class="num">−$1,354.20</td></tr>
+          <tr class="total">
+            <td>Accumulated funds</td>
+            <td class="num">$5,048.71</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Proposed 2027 Budget</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th class="num">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Insurance Premiums</td><td class="num">$3,653.00</td></tr>
+          <tr><td>OC Management Fees</td><td class="num">$2,500.00</td></tr>
+          <tr><td>Gardening</td><td class="num">$959.00</td></tr>
+          <tr><td>Schedule 2.2 Fees</td><td class="num">$110.00</td></tr>
+          <tr class="total">
+            <td>Total</td>
+            <td class="num">$7,222.00</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </section>
+
+  <!-- Insurance -->
+  <section class="section">
+    <button class="section__header" aria-expanded="false" aria-controls="sec-insurance" onclick="toggleSection(this)">
+      <span>🏠 Insurance Details</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-insurance" hidden>
+      <table class="data-table">
+        <tbody>
+          <tr><td>Insurer</td><td>CHU Underwriting Agencies P/L</td></tr>
+          <tr><td>Broker</td><td>Honan Insurance Brokers</td></tr>
+          <tr><td>Policy Number</td><td>35872</td></tr>
+          <tr><td>Building Sum</td><td class="num">$1,422,624</td></tr>
+          <tr><td>Legal Liability</td><td class="num">$20,000,000</td></tr>
+          <tr><td>Office Bearers</td><td class="num">$250,000</td></tr>
+          <tr><td>Standard Excess</td><td class="num">$1,000</td></tr>
+          <tr><td>Renewal Date</td><td>5 September 2026</td></tr>
+          <tr><td>Last Valuation</td><td>15 June 2022</td></tr>
+          <tr><td>Valuation Sum</td><td class="num">$1,340,000</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size: 15px; color: var(--muted);">
+        Additional excess: Other excesses payable are shown in the policy wording.
+      </p>
+    </div>
+  </section>
+
+  <!-- Standing resolutions -->
+  <section class="section">
+    <button class="section__header" aria-expanded="false" aria-controls="sec-standing" onclick="toggleSection(this)">
+      <span>📜 Standing Resolutions</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-standing" hidden>
+      <p>The following standing resolutions remain in place unless members resolve to change them:</p>
+      <ul>
+        <li><strong>Gutter cleaning</strong> — each owner attends to their own unit.</li>
+        <li><strong>Grievance Committee</strong> — all members form the Grievance Committee.</li>
+        <li><strong>Asbestos survey</strong> — not to be undertaken.</li>
+        <li><strong>Maintenance Plan</strong> — not to be prepared (Tier 4 OC).</li>
+        <li><strong>Financial audit</strong> — not required.</li>
+        <li><strong>Final fee notice fee</strong> — $55 administration charge.</li>
+        <li><strong>Debt recovery</strong> — referred after 28 days from final notice.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Proxy information -->
+  <section class="section">
+    <button class="section__header" aria-expanded="false" aria-controls="sec-proxy" onclick="toggleSection(this)">
+      <span>✍ Appointing a Proxy</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-proxy" hidden>
+      <p>If you cannot attend the meeting, you may appoint someone to vote on your behalf — a family member, another owner, or your Owners Corporation Manager.</p>
+
+      <div class="notice-box">
+        <div class="notice-box__title">Proxy Limits</div>
+        Under Section 89D of the Owners Corporations and Other Acts Amendments Act 2021, one person may only hold a proxy for one lot owner in an OC with 20 or fewer lots.
+      </div>
+
+      <p>You can submit your proxy digitally using the button below. Alternatively, complete and return the paper Owners Corporation Proxy Form to our office before the meeting. If you are appointing a Power of Attorney, please attach a copy.</p>
+
+      <a href="proxy.html?oc=RP6474&meeting=2026-05-06" class="action-btn action-btn--secondary" style="background: var(--mbcm-gold); color: var(--mbcm-navy); box-shadow: 0 2px 6px rgba(0,0,0,0.2); margin-top: 12px;">
+        <span class="action-btn__icon" aria-hidden="true">✍</span>
+        Complete Digital Proxy Form
+      </a>
+    </div>
+  </section>
+
+  <!-- Voting sheet -->
+  <section class="section">
+    <button class="section__header" aria-expanded="false" aria-controls="sec-vote" onclick="toggleSection(this)">
+      <span>🗳 Cast Your Vote</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-vote" hidden>
+      <p>If you cannot attend the meeting, you can cast your vote on each agenda motion in advance using the digital voting sheet. Your votes will be counted at the AGM as a directed proxy.</p>
+
+      <p>The voting sheet covers the motions from this agenda, including financial statements, the 2027 budget, insurance decisions, election of chairperson, and reappointment of the Manager.</p>
+
+      <a href="vote.html?oc=RP6474&meeting=2026-05-06" class="action-btn action-btn--secondary" style="background: var(--mbcm-gold); color: var(--mbcm-navy); box-shadow: 0 2px 6px rgba(0,0,0,0.2); margin-top: 12px;">
+        <span class="action-btn__icon" aria-hidden="true">🗳</span>
+        Complete Digital Voting Sheet
+      </a>
+    </div>
+  </section>
+
+  <!-- Financial queries -->
+  <section class="section">
+    <button class="section__header" aria-expanded="false" aria-controls="sec-queries" onclick="toggleSection(this)">
+      <span>❓ Questions About the Agenda</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-queries" hidden>
+      <p>Any questions regarding the financial statements, proposed budget, or agenda items must be submitted in writing to the Manager <strong>at least 3 business days before the meeting</strong>.</p>
+      <p>This allows accurate answers to be prepared for all members during the AGM.</p>
+      <a href="mailto:info@ringwood.mbcm.com.au?subject=Query%20regarding%20AGM%20for%20OC%20RP6474" class="action-btn action-btn--secondary" style="background: var(--mbcm-blue); color: #fff; box-shadow: none;">
+        <span class="action-btn__icon" aria-hidden="true">✉</span>
+        Email Your Question
+      </a>
+    </div>
+  </section>
+
+  <!-- Voting eligibility -->
+  <section class="section">
+    <button class="section__header" aria-expanded="false" aria-controls="sec-voting" onclick="toggleSection(this)">
+      <span>🗳 Voting Eligibility</span>
+      <span class="section__chevron" aria-hidden="true">▾</span>
+    </button>
+    <div class="section__body" id="sec-voting" hidden>
+      <p>Only <strong>financial members</strong> (owners whose fees are fully paid) may vote at the AGM.</p>
+      <p>If your fees are overdue, you may still attend the meeting and participate in discussion, but you cannot vote on resolutions including budget approval or committee elections.</p>
+    </div>
+  </section>
+
+  <!-- PDF download -->
+  <a href="/mbcm-notices/MBCM-Combined-FSG.pdf" class="pdf-download" style="background: #fff; color: var(--mbcm-navy); border-color: var(--mbcm-gold);">
+    <span class="action-btn__icon" aria-hidden="true">📘</span>
+    Download Financial Services Guide
+  </a>
+  <a href="6474_Agenda2026_ElectronicFile.pdf" class="pdf-download" id="pdfDownload">
+    <span class="action-btn__icon" aria-hidden="true">📄</span>
+    Download Full PDF Notice
+  </a>
+
+</main>
+
+<!-- Contact footer -->
+<footer class="contact-footer" role="contentinfo">
+  <div>
+    <h3>MBCM Strata Specialists Ringwood</h3>
+    <p class="contact-footer__detail">Manager: Aruna Rajakaruna</p>
+    <p class="contact-footer__detail">
+      <a href="tel:0398730385">03 9873 0385</a>
+    </p>
+    <p class="contact-footer__detail">
+      <a href="mailto:info@ringwood.mbcm.com.au">info@ringwood.mbcm.com.au</a>
+    </p>
+    <p class="contact-footer__detail">Suite 15, 50 New Street, Ringwood VIC 3134</p>
+    <div class="contact-footer__legal">
+      This mobile notice is an accessibility aid. The formal Notice of AGM is the full PDF document, issued under Section 72 of the Owners Corporations and Other Acts Amendments Act 2021.
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleSection(btn) {
+    var expanded = btn.getAttribute('aria-expanded') === 'true';
+    var id = btn.getAttribute('aria-controls');
+    var body = document.getElementById(id);
+    btn.setAttribute('aria-expanded', String(!expanded));
+    if (body) body.hidden = expanded;
+  }
+</script>
+
+</body>
+</html>
