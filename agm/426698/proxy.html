@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a5f">
+<title>Owners Corporation Proxy Form — MBCM Ringwood</title>
+<style>
+  :root {
+    --mbcm-navy: #1e3a5f;
+    --mbcm-blue: #2E75B6;
+    --mbcm-blue-soft: #EBF3FB;
+    --mbcm-gold: #c8a962;
+    --ink: #111827;
+    --ink-soft: #374151;
+    --muted: #6b7280;
+    --rule: #e5e7eb;
+    --bg: #ffffff;
+    --bg-soft: #f8fafc;
+    --success: #047857;
+    --success-bg: #d1fae5;
+    --error: #b91c1c;
+    --error-bg: #fee2e2;
+    --warn-bg: #fef3c7;
+    --warn-border: #f59e0b;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--bg-soft);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .topbar {
+    background: var(--mbcm-navy);
+    color: #fff;
+    padding: 14px 16px;
+    padding-top: max(14px, env(safe-area-inset-top));
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .header-card {
+    background: #fff;
+    margin: 16px;
+    padding: 22px 20px;
+    border-radius: 12px;
+    border-top: 6px solid var(--mbcm-blue);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .header-card__eyebrow {
+    color: var(--mbcm-blue);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin: 0 0 6px 0;
+  }
+  .header-card__title {
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--mbcm-navy);
+    margin: 0 0 4px 0;
+  }
+  .header-card__meta {
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin: 10px 0 0 0;
+  }
+  .header-card__meta strong { color: var(--mbcm-navy); }
+
+  .form-section {
+    background: #fff;
+    margin: 16px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .form-section__title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--mbcm-navy);
+    margin: 0 0 6px 0;
+  }
+  .form-section__hint {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 16px 0;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+
+  label.field__label {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  label.field__label .req { color: var(--error); }
+
+  input[type=text], input[type=date], textarea {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    font-family: inherit;
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--ink);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--mbcm-blue);
+    box-shadow: 0 0 0 3px rgba(46,117,182,0.15);
+  }
+  textarea { min-height: 90px; resize: vertical; }
+
+  .radio-group { display: grid; gap: 8px; }
+  .radio-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1.5px solid var(--rule);
+    border-radius: 8px;
+    cursor: pointer;
+    background: #fff;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .radio-option:hover { border-color: var(--mbcm-blue); }
+  .radio-option input[type=radio] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    accent-color: var(--mbcm-blue);
+    width: 18px; height: 18px;
+  }
+  .radio-option input[type=radio]:checked + .radio-option__text { color: var(--mbcm-navy); }
+  .radio-option:has(input:checked) {
+    border-color: var(--mbcm-blue);
+    background: var(--mbcm-blue-soft);
+  }
+  .radio-option__text { font-size: 15px; line-height: 1.4; }
+  .radio-option__text strong { display: block; color: var(--mbcm-navy); font-weight: 700; margin-bottom: 2px; }
+
+  .conditional-field {
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--rule);
+  }
+  .conditional-field[hidden] { display: none; }
+
+  /* Signature canvas */
+  .sig-wrap {
+    border: 2px dashed var(--mbcm-blue);
+    border-radius: 10px;
+    background: #fff;
+    padding: 4px;
+    position: relative;
+  }
+  canvas.signature-pad {
+    display: block;
+    width: 100%;
+    height: 180px;
+    background: #fff;
+    border-radius: 6px;
+    cursor: crosshair;
+    touch-action: none;
+    -ms-touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .sig-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  .sig-clear {
+    background: none;
+    border: none;
+    color: var(--mbcm-blue);
+    font-weight: 600;
+    cursor: pointer;
+    padding: 8px 0;
+    font-size: 14px;
+    text-decoration: underline;
+  }
+  .sig-hint { color: var(--muted); }
+
+  /* Privacy notice */
+  .privacy-box {
+    background: var(--warn-bg);
+    border-left: 4px solid var(--warn-border);
+    padding: 14px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #713f12;
+    margin-bottom: 16px;
+  }
+  .privacy-box strong { color: #78350f; }
+
+  .consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--mbcm-blue-soft);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .consent-row input[type=checkbox] {
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    accent-color: var(--mbcm-blue);
+  }
+  .consent-row label { font-size: 15px; line-height: 1.45; color: var(--ink-soft); cursor: pointer; }
+  .consent-row label strong { color: var(--mbcm-navy); }
+
+  /* Submit button */
+  .submit-wrap { margin: 24px 16px 32px; }
+  .submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 56px;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    background: var(--mbcm-gold);
+    color: var(--mbcm-navy);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.1s, opacity 0.2s;
+  }
+  .submit-btn:active { transform: scale(0.98); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Status messages */
+  .status {
+    margin: 16px;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .status--error {
+    background: var(--error-bg);
+    border-left: 4px solid var(--error);
+    color: #7f1d1d;
+  }
+  .status[hidden] { display: none; }
+
+  /* Success screen */
+  .success-screen {
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .success-screen[hidden] { display: none; }
+  .success-screen__tick {
+    font-size: 54px;
+    color: var(--success);
+    margin-bottom: 12px;
+  }
+  .success-screen__title {
+    font-size: 24px;
+    color: var(--mbcm-navy);
+    font-weight: 700;
+    margin: 0 0 8px 0;
+  }
+  .success-screen__body {
+    font-size: 16px;
+    color: var(--ink-soft);
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .success-screen__ref {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: var(--mbcm-blue-soft);
+    border-radius: 6px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    color: var(--mbcm-navy);
+    word-break: break-all;
+  }
+
+  .footer {
+    background: var(--mbcm-navy);
+    color: #fff;
+    padding: 20px 16px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.95;
+  }
+  .footer a { color: #fff; }
+
+  .loading-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    margin: 0 2px;
+    animation: pulse 1s infinite ease-in-out;
+  }
+  .loading-dot:nth-child(2) { animation-delay: 0.15s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  @media (min-width: 600px) {
+    .header-card, .form-section, .submit-wrap, .status {
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">MBCM Strata Specialists Bayswater</div>
+
+<main id="main-form">
+
+  <section class="header-card">
+    <p class="header-card__eyebrow">Owners Corporation Proxy Form</p>
+    <h1 class="header-card__title">Appoint a Proxy for the AGM</h1>
+    <p class="header-card__meta">
+      <strong>Plan No.:</strong> <span id="meta-oc">—</span><br>
+      <strong>Meeting Date:</strong> <span id="meta-meeting">—</span>
+    </p>
+  </section>
+
+  <div id="status-area" class="status status--error" hidden></div>
+
+  <form id="proxy-form" novalidate>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Your Details</h2>
+      <p class="form-section__hint">The owner on title who is appointing the proxy.</p>
+
+      <div class="field">
+        <label class="field__label" for="first-name">First name <span class="req">*</span></label>
+        <input type="text" id="first-name" name="first-name" autocomplete="given-name" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="last-name">Last name <span class="req">*</span></label>
+        <input type="text" id="last-name" name="last-name" autocomplete="family-name" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="address">Your address <span class="req">*</span></label>
+        <input type="text" id="address" name="address" autocomplete="street-address" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="lot-numbers">Lot number(s) <span class="req">*</span></label>
+        <input type="text" id="lot-numbers" name="lot-numbers" placeholder="e.g. 3, or 1 & 2" required>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Proxy Appointment</h2>
+      <p class="form-section__hint">Who is voting on your behalf.</p>
+
+      <div class="field">
+        <label class="field__label" for="proxy-to">Name of proxy holder <span class="req">*</span></label>
+        <input type="text" id="proxy-to" name="proxy-to" placeholder="e.g. MBCM Ringwood, or another owner" required>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="proxy-valid-until">Proxy valid until (optional)</label>
+        <input type="date" id="proxy-valid-until" name="proxy-valid-until">
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Proxy Type</h2>
+      <p class="form-section__hint">Choose one authorisation.</p>
+
+      <div class="radio-group" role="radiogroup">
+        <label class="radio-option">
+          <input type="radio" name="proxy-type" value="attend_speak_vote_meeting" required>
+          <span class="radio-option__text">
+            <strong>General attendance</strong>
+            Attend, speak, and vote on my behalf at this meeting.
+          </span>
+        </label>
+
+        <label class="radio-option">
+          <input type="radio" name="proxy-type" value="attend_speak_vote_dated">
+          <span class="radio-option__text">
+            <strong>Dated authorisation</strong>
+            Attend, speak, and vote on my behalf at the meeting on the date shown above.
+          </span>
+        </label>
+
+        <label class="radio-option">
+          <input type="radio" name="proxy-type" value="ballot_vote">
+          <span class="radio-option__text">
+            <strong>Ballot vote</strong>
+            Vote on a ballot on my behalf.
+          </span>
+        </label>
+
+        <label class="radio-option">
+          <input type="radio" name="proxy-type" value="directed_instructions">
+          <span class="radio-option__text">
+            <strong>Directed instructions</strong>
+            Vote strictly according to my written instructions below.
+          </span>
+        </label>
+
+        <label class="radio-option">
+          <input type="radio" name="proxy-type" value="committee_representation">
+          <span class="radio-option__text">
+            <strong>Committee representation</strong>
+            Represent me on committee matters.
+          </span>
+        </label>
+      </div>
+
+      <div id="directions-wrap" class="conditional-field" hidden>
+        <div class="field">
+          <label class="field__label" for="directions">My directed instructions <span class="req">*</span></label>
+          <textarea id="directions" name="directions" placeholder="Describe exactly how you want your proxy to vote on each motion."></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Your Signature <span class="req" style="color:var(--error)">*</span></h2>
+      <p class="form-section__hint">Sign below using your finger, stylus, or mouse.</p>
+      <div class="sig-wrap">
+        <canvas id="sig" class="signature-pad"></canvas>
+      </div>
+      <div class="sig-actions">
+        <span class="sig-hint">Draw your signature above</span>
+        <button type="button" class="sig-clear" id="sig-clear">Clear</button>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <h2 class="form-section__title">Privacy &amp; Consent</h2>
+
+      <div class="privacy-box">
+        <strong>Privacy notice.</strong> The information you submit on this form is collected by MBCM Strata Specialists Bayswater for the purpose of recording your proxy appointment under the Owners Corporations Act 2006 (Vic). Data is stored in Australia and retained for 12 months in accordance with Regulation 8 of the Owners Corporations Regulations 2018. Your IP address, browser, and timestamp are recorded as part of the audit trail. You may request access or correction by contacting our office.
+      </div>
+
+      <div class="consent-row">
+        <input type="checkbox" id="consent" name="consent" required>
+        <label for="consent">
+          <strong>I consent</strong> to submitting this proxy electronically and confirm the information above is accurate.
+        </label>
+      </div>
+    </section>
+
+    <div class="submit-wrap">
+      <button type="submit" class="submit-btn" id="submit-btn">
+        <span id="submit-label">Submit Proxy</span>
+      </button>
+    </div>
+
+  </form>
+
+</main>
+
+<section class="success-screen" id="success-screen" hidden>
+  <div class="success-screen__tick" aria-hidden="true">✓</div>
+  <h2 class="success-screen__title">Proxy Received</h2>
+  <p class="success-screen__body">
+    Thank you. Your proxy has been lodged with MBCM Strata Specialists Bayswater and will be counted at the meeting, subject to statutory requirements.
+  </p>
+  <p class="success-screen__body">
+    A confirmation will be emailed to you shortly. For any questions contact our office on 03 9874 6796 or
+    <a href="mailto:info@bayswater.mbcm.com.au">info@bayswater.mbcm.com.au</a>.
+  </p>
+  <div class="success-screen__ref" id="success-ref"></div>
+</section>
+
+<footer class="footer">
+  MBCM Strata Specialists Bayswater &middot; Suite 15, 50 New Street, Ringwood VIC 3134<br>
+  <a href="tel:0398746796">03 9874 6796</a> &middot;
+  <a href="mailto:info@bayswater.mbcm.com.au">info@bayswater.mbcm.com.au</a>
+</footer>
+
+<script>
+  // ==========================================================
+  // CONFIG — fill these in before deploying
+  // ==========================================================
+  const SUPABASE_URL = 'https://trysksaprnuuxsqcoiwu.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_P0gogOaydZPReJYlwhqJMA_S6jd_Qko';
+
+  // ==========================================================
+  // URL parameters → OC + meeting
+  // ==========================================================
+  const params = new URLSearchParams(location.search);
+  const oc = params.get('oc') || '';
+  const meeting = params.get('meeting') || '';
+  document.getElementById('meta-oc').textContent = oc || '—';
+  document.getElementById('meta-meeting').textContent = meeting ? formatDate(meeting) : '—';
+
+  function formatDate(iso) {
+    try {
+      const d = new Date(iso);
+      if (isNaN(d)) return iso;
+      return d.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    } catch { return iso; }
+  }
+
+  // ==========================================================
+  // Conditional: show directions textarea when directed_instructions chosen
+  // ==========================================================
+  const directionsWrap = document.getElementById('directions-wrap');
+  const directionsInput = document.getElementById('directions');
+  document.querySelectorAll('input[name="proxy-type"]').forEach(r => {
+    r.addEventListener('change', (e) => {
+      const show = e.target.value === 'directed_instructions';
+      directionsWrap.hidden = !show;
+      directionsInput.required = show;
+    });
+  });
+
+  // ==========================================================
+  // Signature pad — minimal inline, fixed-resolution, with logging
+  // ==========================================================
+  const sigCanvas = document.getElementById('sig');
+  console.log('[sig] canvas element:', sigCanvas);
+  const sigCtx = sigCanvas.getContext('2d');
+  console.log('[sig] context:', sigCtx);
+
+  // Fixed internal resolution — scale mouse positions from CSS to canvas coords
+  sigCanvas.width = 800;
+  sigCanvas.height = 180;
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+  sigCtx.strokeStyle = '#1e3a5f';
+  sigCtx.fillStyle = '#1e3a5f';
+
+  let sigDrawing = false;
+  let sigHasData = false;
+
+  function sigPos(e) {
+    const rect = sigCanvas.getBoundingClientRect();
+    const scaleX = sigCanvas.width / rect.width;
+    const scaleY = sigCanvas.height / rect.height;
+    const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+    const cx = t ? t.clientX : e.clientX;
+    const cy = t ? t.clientY : e.clientY;
+    return { x: (cx - rect.left) * scaleX, y: (cy - rect.top) * scaleY };
+  }
+
+  function sigBegin(e) {
+    e.preventDefault();
+    sigDrawing = true;
+    const p = sigPos(e);
+    console.log('[sig] begin at', p);
+    sigCtx.beginPath();
+    sigCtx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+    sigCtx.fill();
+    sigCtx.beginPath();
+    sigCtx.moveTo(p.x, p.y);
+    sigHasData = true;
+  }
+  function sigMove(e) {
+    if (!sigDrawing) return;
+    e.preventDefault();
+    const p = sigPos(e);
+    sigCtx.lineTo(p.x, p.y);
+    sigCtx.stroke();
+  }
+  function sigEnd() {
+    sigDrawing = false;
+  }
+
+  sigCanvas.addEventListener('mousedown', sigBegin);
+  sigCanvas.addEventListener('mousemove', sigMove);
+  sigCanvas.addEventListener('mouseup', sigEnd);
+  sigCanvas.addEventListener('mouseleave', sigEnd);
+  sigCanvas.addEventListener('touchstart', sigBegin, { passive: false });
+  sigCanvas.addEventListener('touchmove', sigMove, { passive: false });
+  sigCanvas.addEventListener('touchend', sigEnd);
+
+  document.getElementById('sig-clear').addEventListener('click', () => {
+    sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    sigHasData = false;
+  });
+  console.log('[sig] listeners attached');
+
+  // ==========================================================
+  // Submit
+  // ==========================================================
+  const form = document.getElementById('proxy-form');
+  const statusArea = document.getElementById('status-area');
+  const submitBtn = document.getElementById('submit-btn');
+  const submitLabel = document.getElementById('submit-label');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    statusArea.hidden = true;
+
+    // Validate URL params
+    if (!oc || !meeting) {
+      showError('This form is missing the OC plan number or meeting date in the URL. Please use the link provided in your AGM notice.');
+      return;
+    }
+
+    // Validate signature
+    if (!sigHasData) {
+      showError('Please sign in the signature box above before submitting.');
+      return;
+    }
+
+    // Basic required-field check
+    const data = new FormData(form);
+    const proxyType = data.get('proxy-type');
+    if (!proxyType) {
+      showError('Please choose a proxy type.');
+      return;
+    }
+    if (proxyType === 'directed_instructions' && !data.get('directions')?.trim()) {
+      showError('Directed instructions are required when using the directed instructions option.');
+      return;
+    }
+    if (!data.get('consent')) {
+      showError('Please tick the consent checkbox to submit.');
+      return;
+    }
+
+    // Lock the button
+    submitBtn.disabled = true;
+    submitLabel.innerHTML = 'Submitting <span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>';
+
+    // Best-effort IP lookup (non-blocking)
+    let ip = null;
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json', { cache: 'no-store' });
+      if (ipRes.ok) ip = (await ipRes.json()).ip;
+    } catch { /* ignore */ }
+
+    // Generate the ID client-side so we have a reference even though
+    // anon cannot SELECT the row back from Supabase.
+    const submissionId = (crypto.randomUUID && crypto.randomUUID()) ||
+      ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      }));
+
+    const payload = {
+      id: submissionId,
+      oc_plan_number: oc,
+      meeting_date: meeting,
+      owner_name_first: data.get('first-name')?.trim(),
+      owner_name_last: data.get('last-name')?.trim(),
+      owner_address: data.get('address')?.trim(),
+      lot_numbers: data.get('lot-numbers')?.trim(),
+      proxy_type: proxyType,
+      proxy_authorised_to: data.get('proxy-to')?.trim(),
+      proxy_valid_until: data.get('proxy-valid-until') || null,
+      directed_instructions: data.get('directions')?.trim() || null,
+      signature_data: sigCanvas.toDataURL('image/png'),
+      consent_to_electronic: true,
+      submitter_ip: ip,
+      submitter_user_agent: navigator.userAgent
+    };
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/proxies`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        await logAudit('proxy_failed', { reason: res.status, body: text.slice(0, 500) }, ip);
+        showError('Your proxy could not be submitted. Please check the details and try again, or call our office on 03 9874 6796.');
+        submitBtn.disabled = false;
+        submitLabel.textContent = 'Submit Proxy';
+        return;
+      }
+
+      await logAudit('proxy_submitted', { id: submissionId }, ip);
+
+      // Show success screen, hide form
+      document.getElementById('main-form').hidden = true;
+      const successScreen = document.getElementById('success-screen');
+      successScreen.hidden = false;
+      document.getElementById('success-ref').textContent = 'Reference: ' + submissionId;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      await logAudit('proxy_failed', { reason: 'network', message: String(err).slice(0, 500) }, ip);
+      showError('Network error. Please check your connection and try again.');
+      submitBtn.disabled = false;
+      submitLabel.textContent = 'Submit Proxy';
+    }
+  });
+
+  function showError(msg) {
+    statusArea.textContent = msg;
+    statusArea.hidden = false;
+    statusArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  async function logAudit(eventType, summary, ip) {
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/audit_log`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          event_type: eventType,
+          oc_plan_number: oc,
+          payload_summary: summary,
+          submitter_ip: ip,
+          submitter_user_agent: navigator.userAgent
+        })
+      });
+    } catch (_) { /* best-effort only */ }
+  }
+</script>
+
+</body>
+</html>
