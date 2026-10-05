@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Book the conference room</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#17324d">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2317324d'/%3E%3Crect x='7' y='9' width='18' height='4' rx='2' fill='%23c8a962'/%3E%3Crect x='7' y='16' width='18' height='4' rx='2' fill='%23fff' opacity='.55'/%3E%3Crect x='7' y='23' width='11' height='3' rx='1.5' fill='%23fff' opacity='.3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#17324d; --ink-2:#3c5169; --mute:#66758a; --paper:#eef1f5; --card:#ffffff; --line:#d9dfe7;
+  --brass:#c8a962; --brass-soft:#f6edd6; --brass-deep:#7a5f1c; --taken:#e3e8ee; --taken-ink:#5b6a7c;
+  --ok:#1c7350; --ok-soft:#e4f3ec; --bad:#a8342b; --bad-soft:#fbe9e7; --r:12px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45;font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+h1,h2,p{margin:0}
+.top{background:var(--ink);color:#fff;padding:22px 20px 54px}
+.top-in,.wrap{max-width:540px;margin:0 auto}
+.top small{display:block;color:var(--brass);font-weight:500;font-size:14px;margin-bottom:6px}
+.top h1{font-size:30px;line-height:1.1;font-weight:700;letter-spacing:-.02em}
+.top p{margin-top:8px;color:#c4cfdb;font-size:15px}
+.wrap{padding:0 14px 150px;margin-top:-36px}
+.card{background:var(--card);border-radius:var(--r);padding:18px;margin-bottom:12px;box-shadow:0 1px 0 rgba(23,50,77,.06)}
+.step{display:flex;align-items:baseline;gap:10px;margin-bottom:14px}
+.step b{flex:none;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;font-size:13px;font-weight:600;display:grid;place-items:center;transform:translateY(-1px)}
+.step h2{font-size:18px;font-weight:600;letter-spacing:-.01em}
+.card.locked{opacity:.5;pointer-events:none}
+label{display:block;font-size:14px;font-weight:500;color:var(--ink-2);margin:12px 0 5px}
+label:first-of-type{margin-top:0}
+input[type=text],input[type=email],input[type=date],select{width:100%;height:48px;padding:0 12px;border:1.5px solid var(--line);border-radius:9px;background:#fff;font-size:16px;appearance:none;-webkit-appearance:none}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2317324d' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:9px;border:1.5px solid var(--ink);background:var(--ink);color:#fff;font-weight:600;font-size:16px;cursor:pointer;text-decoration:none;width:100%}
+.btn.ghost{background:#fff;color:var(--ink)}
+.btn.danger{background:var(--bad);border-color:var(--bad)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn.busy{position:relative;color:transparent}
+.btn.busy::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:spin .7s linear infinite}
+.btn.ghost.busy::after{border-color:rgba(23,50,77,.25);border-top-color:var(--ink)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mt{margin-top:14px}
+.note{font-size:14px;color:var(--mute);margin-top:10px}
+.msg{border-radius:9px;padding:12px 14px;font-size:15px;margin-top:14px}
+.msg.bad{background:var(--bad-soft);color:var(--bad)}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}
+.msg.warn{background:var(--brass-soft);color:var(--brass-deep)}
+.msg b{font-weight:600}
+.linkbtn{background:none;border:0;padding:0;color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer;font-size:inherit}
+
+/* who */
+.who{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.who strong{display:block;font-size:17px;font-weight:600}
+.who span{display:block;font-size:14px;color:var(--mute)}
+.meter{margin-top:14px}
+.meter-bar{height:8px;border-radius:4px;background:var(--taken);overflow:hidden}
+.meter-bar i{display:block;height:100%;background:var(--brass);border-radius:4px}
+.meter-txt{display:flex;justify-content:space-between;font-size:14px;margin-top:7px;color:var(--ink-2)}
+.meter-txt b{font-weight:600;color:var(--ink)}
+
+/* days */
+.days{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -4px;scroll-snap-type:x proximity;scrollbar-width:none}
+.days::-webkit-scrollbar{display:none}
+.day{flex:none;width:58px;height:70px;border-radius:10px;border:1.5px solid var(--line);background:#fff;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;scroll-snap-align:start}
+.day span{font-size:12px;color:var(--mute);font-weight:500}
+.day b{font-size:20px;font-weight:600;line-height:1.1}
+.day em{font-style:normal;font-size:11px;color:var(--mute)}
+.day[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.day[aria-pressed=true] span,.day[aria-pressed=true] em{color:#c4cfdb}
+.otherday{display:flex;align-items:center;gap:10px;margin-top:4px}
+.otherday label{margin:0;flex:none}
+.otherday input{height:42px}
+
+/* the day ruler */
+.dayhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:18px 0 10px}
+.dayhead strong{font-size:16px;font-weight:600}
+.legend{display:flex;gap:12px;font-size:12px;color:var(--mute)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.ruler{position:relative;border-top:1px solid var(--line)}
+.slot{display:grid;grid-template-columns:54px 1fr;align-items:stretch;width:100%;height:34px;border:0;background:none;padding:0;text-align:left;cursor:pointer}
+.slot .t{font-size:12px;color:var(--mute);padding-top:3px;font-weight:500}
+.slot .c{border-left:1.5px solid var(--line);border-bottom:1px dashed #e9edf2;padding:0 10px;display:flex;align-items:center;font-size:13px;font-weight:500;transition:background .12s}
+.slot.hour .c{border-bottom:1px solid var(--line)}
+.slot:not([disabled]):hover .c{background:#f6f8fa}
+.slot.taken{cursor:default}
+.slot.taken .c{background:repeating-linear-gradient(135deg,var(--taken) 0 6px,#edf0f4 6px 12px);color:var(--taken-ink);border-bottom-color:transparent}
+.slot.gone{cursor:default}
+.slot.gone .c{background:#f7f8fa}
+.slot.gone .t{opacity:.5}
+.slot.sel .c{background:var(--brass);color:#2b2208;border-bottom-color:transparent;border-left-color:var(--brass-deep)}
+.slot.sel:hover .c{background:var(--brass)}
+.slot.sel.first .c{border-radius:0 8px 0 0}
+.slot.sel.last .c{border-radius:0 0 8px 0}
+.slot.sel.first.last .c{border-radius:0 8px 8px 0}
+.endcap{display:grid;grid-template-columns:54px 1fr;font-size:12px;color:var(--mute);font-weight:500}
+.endcap span{padding-top:3px}
+
+/* sticky bar */
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 14px calc(12px + env(safe-area-inset-bottom));transform:translateY(110%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s;z-index:5}
+.bar.on{transform:none;visibility:visible;transition:transform .22s ease}
+.bar-in{max-width:512px;margin:0 auto;display:flex;gap:12px;align-items:center}
+.bar-txt{flex:1;min-width:0}
+.bar-txt b{display:block;font-size:16px;font-weight:600}
+.bar-txt span{display:block;font-size:13px;color:var(--mute)}
+.bar .btn{width:auto;flex:none;padding:0 20px}
+
+/* result screens */
+.done{text-align:left}
+.tick{width:46px;height:46px;border-radius:50%;background:var(--ok-soft);display:grid;place-items:center;margin-bottom:14px}
+.tick.grey{background:var(--taken)}
+.done h2{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+.facts{margin:16px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.facts div{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:10px 14px;font-size:15px;border-bottom:1px solid #eef1f5}
+.facts div:last-child{border-bottom:0}
+.facts dt{color:var(--mute)}
+.facts dd{margin:0;font-weight:600}
+.stack{display:grid;gap:10px}
+.foot{font-size:13px;color:var(--mute);text-align:center;padding:10px 0 0}
+.foot a{color:var(--ink-2)}
+.skeleton{height:120px;border-radius:10px;background:linear-gradient(90deg,#eef1f5,#f7f9fb,#eef1f5);background-size:200% 100%;animation:sh 1.2s linear infinite}
+@keyframes sh{to{background-position:-200% 0}}
+[hidden]{display:none!important}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (min-width:600px){.top{padding-top:34px}.top h1{font-size:36px}.slot{height:32px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="top-in">
+  <small id="siteName">&nbsp;</small>
+  <h1 id="roomName">Conference room</h1>
+  <p id="siteAddr">Pick a time and it is yours. Confirmation arrives by email.</p>
+</div></header>
+
+<main class="wrap" id="app">
+  <div class="card" id="loading"><div class="skeleton"></div></div>
+
+  <!-- booking flow -->
+  <section id="flow" hidden>
+    <div class="card" id="s1">
+      <div class="step"><b>1</b><h2>Your suite</h2></div>
+      <form id="whoForm" novalidate>
+        <label for="unit">Suite</label>
+        <select id="unit" required><option value="">Choose your suite</option></select>
+        <label for="email">Email registered for that suite</label>
+        <input id="email" type="email" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" placeholder="name@business.com.au" required>
+        <button class="btn mt" id="whoBtn" type="submit">Check my details</button>
+        <p class="note">Use the email your owners corporation manager has on file for the suite.</p>
+      </form>
+      <div id="whoMsg"></div>
+      <form id="reqForm" hidden novalidate>
+        <label for="reqName">Your name</label>
+        <input id="reqName" type="text" autocomplete="name" placeholder="First and last name">
+        <button class="btn ghost mt" id="reqBtn" type="submit">Ask MBCM to add this email</button>
+      </form>
+      <div id="whoOk" hidden>
+        <div class="who"><div><strong id="whoTitle"></strong><span id="whoSub"></span></div><button class="linkbtn" id="whoChange" type="button">Change</button></div>
+        <div class="meter"><div class="meter-bar"><i id="meterFill"></i></div><div class="meter-txt"><span><b id="mLeft"></b> left</span><span id="mUsed"></span></div></div>
+      </div>
+    </div>
+
+    <div class="card locked" id="s2">
+      <div class="step"><b>2</b><h2>Pick a day and time</h2></div>
+      <div class="days" id="days" role="group" aria-label="Day"></div>
+      <div class="otherday"><label for="otherDate">Another date</label><input id="otherDate" type="date"></div>
+      <div class="dayhead"><strong id="dayTitle"></strong><div class="legend"><span><i style="background:var(--brass)"></i>Yours</span><span><i style="background:var(--taken)"></i>Booked</span></div></div>
+      <div id="dayNote"></div>
+      <div class="ruler" id="ruler" aria-label="Times"></div>
+      <div class="endcap"><span id="endcap"></span></div>
+      <p class="note">Tap a start time, then tap the last half hour you need.</p>
+    </div>
+
+    <div class="card locked" id="s3">
+      <div class="step"><b>3</b><h2>Who is booking</h2></div>
+      <label for="name">Your name</label>
+      <input id="name" type="text" autocomplete="name" placeholder="First and last name">
+      <label for="purpose">What is it for? (optional)</label>
+      <input id="purpose" type="text" maxlength="120" placeholder="Client meeting, training, AGM">
+      <div id="bookMsg"></div>
+    </div>
+  </section>
+
+  <!-- result / link screens -->
+  <section class="card done" id="screen" hidden></section>
+
+  <p class="foot" id="foot"></p>
+</main>
+
+<div class="bar" id="bar"><div class="bar-in">
+  <div class="bar-txt"><b id="barMain"></b><span id="barSub"></span></div>
+  <button class="btn" id="bookBtn" type="button">Book the room</button>
+</div></div>
+
+<script>
+const API = "https://gxqywrcvzvcguqsipnfe.supabase.co/functions/v1/conf-booking";
+const qs = new URLSearchParams(location.search);
+const SITE = qs.get("site") || "50-new-st";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const store = { get(k) { try { return localStorage.getItem("crb_" + k) || ""; } catch { return ""; } }, set(k, v) { try { localStorage.setItem("crb_" + k, v); } catch {} } };
+
+const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const pd = (d) => { const [y, m, dd] = d.split("-").map(Number); return new Date(Date.UTC(y, m - 1, dd)); };
+const iso = (dt) => dt.toISOString().slice(0, 10);
+const addDays = (d, n) => { const x = pd(d); x.setUTCDate(x.getUTCDate() + n); return iso(x); };
+const longDate = (d) => { const x = pd(d); return `${DAYS[x.getUTCDay()]} ${x.getUTCDate()} ${MONTHS[x.getUTCMonth()]}`; };
+const toMin = (t) => { const [h, m] = t.split(":").map(Number); return h * 60 + m; };
+const toT = (m) => `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+const t12 = (m) => { const h = Math.floor(m / 60), mm = m % 60, ap = h < 12 ? "am" : "pm", hh = h % 12 === 0 ? 12 : h % 12; return `${hh}:${String(mm).padStart(2, "0")} ${ap}`; };
+const t12s = (m) => { const h = Math.floor(m / 60), ap = h < 12 ? "am" : "pm", hh = h % 12 === 0 ? 12 : h % 12; return `${hh} ${ap}`; };
+const hrs = (n) => { const v = Number(n); return `${v % 1 === 0 ? v : v.toFixed(1)} ${v === 1 ? "hour" : "hours"}`; };
+
+async function api(action, body = {}) {
+  const r = await fetch(API, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action, site: SITE, ...body }) });
+  return r.json();
+}
+function busy(btn, on) { btn.classList.toggle("busy", on); btn.disabled = on; }
+const ERR = {
+  not_registered: "That email is not registered for this suite.",
+  clash: "Someone booked part of that time a moment ago. Pick another time.",
+  in_past: "That time has already passed. Pick a later time.",
+  outside_hours: "That time is outside the room's booking hours.",
+  bad_increment: "Bookings start and end on the hour or half hour.",
+  too_far_ahead: "That date is too far ahead to book yet.",
+  missing_name: "Add your name so the office knows who booked.",
+  missing_time: "Pick a start and end time.",
+  end_before_start: "The end time must be after the start time.",
+  server_error: "Something went wrong on our side. Try again in a minute.",
+};
+
+let S = { site: null, units: [], who: null, date: null, day: null, sel: null };
+
+/* ---------- screens from email links ---------- */
+function facts(b) {
+  return `<dl class="facts">
+    <div><dt>Date</dt><dd>${esc(longDate(b.date))} ${esc(b.date.slice(0, 4))}</dd></div>
+    <div><dt>Time</dt><dd>${esc(t12(toMin(b.start)))} to ${esc(t12(toMin(b.end)))} (${esc(hrs(b.hours))})</dd></div>
+    <div><dt>Suite</dt><dd>${esc(b.unit_label)}${b.occupant ? ", " + esc(b.occupant) : ""}</dd></div>
+    <div><dt>Booked by</dt><dd>${esc(b.name || "")}</dd></div>
+    <div><dt>Reference</dt><dd>${esc(b.ref)}</dd></div></dl>`;
+}
+const TICK = `<div class="tick"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1c7350" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>`;
+const DOT = `<div class="tick grey"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5b6a7c" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></div>`;
+function show(html) { $("loading").hidden = true; $("flow").hidden = true; $("bar").classList.remove("on"); const s = $("screen"); s.innerHTML = html; s.hidden = false; window.scrollTo({ top: 0 }); }
+const backLink = `<a class="btn ghost" href="?site=${encodeURIComponent(SITE)}">Book the room</a>`;
+
+async function cancelScreen(token) {
+  const r = await api("cancel", { token });
+  if (!r.ok) return show(`${DOT}<h2>We could not find that booking</h2><p class="note">The link may be incomplete. Open it again from your confirmation email.</p><div class="stack mt">${backLink}</div>`);
+  const b = r.booking;
+  setHeader({ name: b.site_name, room: b.room, address: b.address });
+  if (b.status === "cancelled") return show(`${DOT}<h2>This booking is already cancelled</h2>${facts(b)}<div class="stack">${backLink}</div>`);
+  show(`<h2>Cancel this booking?</h2>${facts(b)}<p class="note" style="margin:0 0 14px">${esc(hrs(b.hours))} will go back to ${esc(b.unit_label)}.</p><div id="cMsg"></div><div class="stack"><button class="btn danger" id="cYes">Cancel this booking</button><a class="btn ghost" href="?site=${encodeURIComponent(b.site)}">Keep it</a></div>`);
+  $("cYes").onclick = async () => {
+    busy($("cYes"), true);
+    const x = await api("cancel", { token, confirm: true }).catch(() => ({ ok: false }));
+    if (x.ok) return show(`${TICK}<h2>Booking cancelled</h2>${facts(x.booking)}<p class="note" style="margin:0 0 14px">${esc(hrs(x.booking.available))} of ${Number(x.booking.allocated)} now left for ${esc(x.booking.unit_label)} in ${x.booking.year}. Remove the event from your calendar.</p><div class="stack">${backLink}</div>`);
+    busy($("cYes"), false);
+    $("cMsg").innerHTML = `<div class="msg bad" style="margin:0 0 14px">${x.error === "already_started" ? "This booking has already started, so it can no longer be cancelled online." : "That did not work. Try again in a minute."}</div>`;
+  };
+}
+async function accessScreen(token, what) {
+  const approve = what !== "decline";
+  const r = await api("decide", { token, approve });
+  if (!r.ok) return show(`${DOT}<h2>We could not find that request</h2><p class="note">Open the link again from the email.</p>`);
+  setHeader({ name: r.site_name, room: r.room });
+  const who = `<dl class="facts"><div><dt>Name</dt><dd>${esc(r.name || "")}</dd></div><div><dt>Email</dt><dd>${esc(r.email)}</dd></div><div><dt>Suite</dt><dd>${esc(r.unit_label)}${r.occupant ? ", " + esc(r.occupant) : ""}</dd></div></dl>`;
+  if (r.status !== "pending") return show(`${r.status === "approved" ? TICK : DOT}<h2>Already ${esc(r.status)}</h2>${who}<p class="note">Nothing more to do.</p>`);
+  show(`<h2>${approve ? "Approve this email for room bookings?" : "Decline this request?"}</h2>${who}<div class="stack"><button class="btn ${approve ? "" : "danger"}" id="aYes">${approve ? "Approve this email" : "Decline this request"}</button></div><p class="note">${approve ? "They will be able to book the room for this suite straight away and will get an email to say so." : "They will get an email saying the address could not be added."}</p>`);
+  $("aYes").onclick = async () => {
+    busy($("aYes"), true);
+    const x = await api("decide", { token, approve, confirm: true }).catch(() => ({ ok: false }));
+    if (x.ok) return show(`${x.status === "approved" ? TICK : DOT}<h2>${x.status === "approved" ? "Approved" : "Declined"}</h2>${who}<p class="note">${esc(x.email)} has been emailed.</p>`);
+    busy($("aYes"), false);
+  };
+}
+
+/* ---------- booking flow ---------- */
+function setHeader(s) {
+  if (s.name) $("siteName").textContent = s.name;
+  if (s.room) $("roomName").textContent = s.room;
+  if (s.address) $("siteAddr").textContent = s.address;
+  document.title = `Book the ${(s.room || "conference room").toLowerCase()}${s.name ? ", " + s.name : ""}`;
+}
+async function loadState(date) {
+  const r = await api("state", date ? { date } : {});
+  if (r.error) throw new Error(r.error);
+  S.site = r.site; S.units = r.units; S.day = r; S.date = r.date;
+  return r;
+}
+function renderUnits() {
+  const sel = $("unit");
+  for (const u of S.units) { const o = document.createElement("option"); o.value = u.code; o.textContent = u.occupant ? `${u.label}, ${u.occupant}` : u.label; sel.appendChild(o); }
+  const saved = store.get("unit"); if (saved && S.units.some((u) => u.code === saved)) sel.value = saved;
+  $("email").value = store.get("email"); $("name").value = store.get("name"); $("reqName").value = store.get("name");
+}
+function renderDays() {
+  const el = $("days"); el.innerHTML = "";
+  for (let i = 0; i < 21; i++) {
+    const d = addDays(S.site.today, i), x = pd(d);
+    const b = document.createElement("button"); b.type = "button"; b.className = "day"; b.dataset.d = d; b.setAttribute("aria-pressed", d === S.date);
+    b.setAttribute("aria-label", longDate(d));
+    b.innerHTML = `<span>${i === 0 ? "Today" : DAYS[x.getUTCDay()].slice(0, 3)}</span><b>${x.getUTCDate()}</b><em>${MONTHS[x.getUTCMonth()].slice(0, 3)}</em>`;
+    b.onclick = () => pickDate(d);
+    el.appendChild(b);
+  }
+  const od = $("otherDate"); od.min = S.site.today; od.max = S.site.max_date; od.value = S.date;
+}
+async function pickDate(d) {
+  if (!d || d < S.site.today || d > S.site.max_date) return;
+  S.sel = null; S.date = d;
+  document.querySelectorAll(".day").forEach((b) => b.setAttribute("aria-pressed", b.dataset.d === d));
+  $("otherDate").value = d; $("ruler").style.opacity = ".4";
+  try { await loadState(d); } catch { $("dayNote").innerHTML = `<div class="msg bad" style="margin:0 0 12px">Could not load that day. Check your connection and try again.</div>`; }
+  $("ruler").style.opacity = "";
+  if (S.who && String(S.who.year) !== d.slice(0, 4)) await refreshWho(Number(d.slice(0, 4)));
+  renderRuler(); renderBar();
+}
+function takenAt(m) { return S.day.bookings.find((b) => m >= toMin(b.start) && m < toMin(b.end)); }
+function renderRuler() {
+  const { open, close, slot, today, now } = S.site, o = toMin(open), c = toMin(close), nowM = toMin(now);
+  $("dayTitle").textContent = `${longDate(S.date)}${S.date.slice(0, 4) !== today.slice(0, 4) ? " " + S.date.slice(0, 4) : ""}`;
+  const ut = S.day.untimed || [];
+  $("dayNote").innerHTML = ut.length ? `<div class="msg warn" style="margin:0 0 12px"><b>${ut.map((x) => `${esc(x.unit)} (${esc(hrs(x.hours))})`).join(" and ")}</b> already ${ut.length > 1 ? "have bookings" : "has a booking"} on this day made through the office, and the time is not shown here. Check with ${esc(S.site.office_name)} on ${esc(S.site.office_phone || S.site.office_email)} before you book.</div>` : "";
+  const el = $("ruler"); el.innerHTML = "";
+  for (let m = o; m < c; m += slot) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "slot" + ((m + slot) % 60 === 0 ? " hour" : ""); b.dataset.m = m;
+    const tk = takenAt(m), gone = S.date === today && m <= nowM;
+    let label = "";
+    if (tk) { b.classList.add("taken"); b.disabled = true; if (toMin(tk.start) === m || m === o) label = `Booked, ${esc(tk.unit)}`; }
+    else if (gone) { b.classList.add("gone"); b.disabled = true; }
+    else if (S.sel && m >= S.sel.s && m < S.sel.e) { b.classList.add("sel"); if (m === S.sel.s) { b.classList.add("first"); label = `${t12(S.sel.s)} to ${t12(S.sel.e)}`; } if (m + slot === S.sel.e) b.classList.add("last"); }
+    b.setAttribute("aria-label", `${t12(m)}${tk ? ", booked" : gone ? ", passed" : ""}`);
+    b.innerHTML = `<span class="t">${m % 60 === 0 ? t12s(m) : ""}</span><span class="c">${label}</span>`;
+    if (!b.disabled) b.onclick = () => tapSlot(m);
+    el.appendChild(b);
+  }
+  $("endcap").textContent = t12s(c);
+}
+function tapSlot(m) {
+  const slot = S.site.slot, sel = S.sel;
+  if (!sel) S.sel = { s: m, e: m + slot };
+  else if (m >= sel.s && m < sel.e && sel.e - sel.s === slot) S.sel = null;
+  else if (m >= sel.e || (m > sel.s && m < sel.e)) {
+    let clear = true; for (let x = sel.s; x <= m; x += slot) if (takenAt(x)) clear = false;
+    S.sel = clear ? { s: sel.s, e: m + slot } : { s: m, e: m + slot };
+  } else S.sel = { s: m, e: m + slot };
+  renderRuler(); renderBar();
+}
+function renderBar() {
+  const on = !!(S.who && S.sel);
+  $("bar").classList.toggle("on", on); $("s3").classList.toggle("locked", !on);
+  $("bookMsg").innerHTML = "";
+  if (!on) return;
+  const h = (S.sel.e - S.sel.s) / 60, left = Number(S.who.available) - h;
+  $("barMain").textContent = `${t12(S.sel.s)} to ${t12(S.sel.e)}`;
+  const over = left < 0;
+  $("barSub").textContent = over ? `${hrs(h)} needed, ${hrs(S.who.available)} left` : `${longDate(S.date).split(" ").map((w, i) => (i === 0 || i === 2 ? w.slice(0, 3) : w)).join(" ")}, ${hrs(h)}`;
+  $("barSub").style.color = over ? "var(--bad)" : "";
+  $("bookBtn").disabled = over;
+  if (over) $("bookMsg").innerHTML = `<div class="msg bad">${esc(S.who.unit_label)} has ${esc(hrs(S.who.available))} left for ${S.who.year}. Shorten the booking, or contact ${esc(S.site.office_name)} at <a href="mailto:${esc(S.site.office_email)}" style="color:inherit">${esc(S.site.office_email)}</a> about extra hours.</div>`;
+}
+function renderWho() {
+  const w = S.who; $("whoForm").hidden = !!w; $("whoOk").hidden = !w; $("reqForm").hidden = true; $("whoMsg").innerHTML = "";
+  $("s2").classList.toggle("locked", !w);
+  if (!w) { renderBar(); return; }
+  $("whoTitle").textContent = w.occupant ? `${w.unit_label}, ${w.occupant}` : w.unit_label;
+  $("whoSub").textContent = w.email;
+  const pct = Math.max(0, Math.min(100, (Number(w.available) / Number(w.allocated)) * 100));
+  $("meterFill").style.width = pct + "%";
+  $("mLeft").textContent = hrs(w.available);
+  $("mUsed").textContent = `${hrs(w.used)} used of ${Number(w.allocated)} in ${w.year}`;
+  renderBar();
+}
+async function refreshWho(year) {
+  const r = await api("verify", { unit: S.who.unit, email: S.who.email, year }).catch(() => null);
+  if (r && r.ok) { S.who = { ...r, email: S.who.email }; renderWho(); }
+}
+$("whoForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const unit = $("unit").value, email = $("email").value.trim().toLowerCase();
+  $("whoMsg").innerHTML = ""; $("reqForm").hidden = true;
+  if (!unit) return ($("whoMsg").innerHTML = `<div class="msg bad">Choose your suite.</div>`);
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return ($("whoMsg").innerHTML = `<div class="msg bad">Enter the email registered for your suite.</div>`);
+  busy($("whoBtn"), true);
+  const r = await api("verify", { unit, email, year: Number(S.date.slice(0, 4)) }).catch(() => ({ ok: false, error: "server_error" }));
+  busy($("whoBtn"), false);
+  if (r.ok) { S.who = { ...r, email }; store.set("unit", unit); store.set("email", email); renderWho(); $("s2").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  if (r.error === "not_registered") {
+    const u = S.units.find((x) => x.code === unit);
+    $("whoMsg").innerHTML = `<div class="msg bad"><b>${esc(email)}</b> is not registered for ${esc(u ? u.label : "that suite")}. Check the suite and spelling, or try the email your invoices and notices go to.</div><p class="note">New here, or a tenant? Ask the office to add your email. You only do this once.</p>`;
+    $("reqForm").hidden = false;
+  } else $("whoMsg").innerHTML = `<div class="msg bad">${ERR[r.error] || ERR.server_error}</div>`;
+};
+$("reqForm").onsubmit = async (e) => {
+  e.preventDefault();
+  const name = $("reqName").value.trim();
+  if (name.length < 2) return $("reqName").focus();
+  busy($("reqBtn"), true);
+  const r = await api("request_access", { unit: $("unit").value, email: $("email").value.trim().toLowerCase(), name }).catch(() => ({ ok: false }));
+  busy($("reqBtn"), false);
+  store.set("name", name);
+  if (!r.ok) return ($("whoMsg").innerHTML = `<div class="msg bad">${ERR[r.error] || ERR.server_error}</div>`);
+  $("reqForm").hidden = true;
+  $("whoMsg").innerHTML = r.already ? `<div class="msg ok">That email is registered now. Tap "Check my details" again.</div>`
+    : r.status === "declined" ? `<div class="msg bad">This email was not approved for that suite. Contact the office at ${esc(r.office_email)}.</div>`
+    : `<div class="msg ok"><b>Request sent.</b> The office will check it and email you at ${esc($("email").value.trim())} once you can book.</div>`;
+};
+$("whoChange").onclick = () => { S.who = null; S.sel = null; renderWho(); renderRuler(); };
+$("otherDate").onchange = (e) => pickDate(e.target.value);
+
+$("bookBtn").onclick = async () => {
+  const name = $("name").value.trim();
+  if (name.length < 2) { $("bookMsg").innerHTML = `<div class="msg bad">${ERR.missing_name}</div>`; $("name").focus(); $("s3").scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+  store.set("name", name);
+  busy($("bookBtn"), true);
+  const r = await api("book", { unit: S.who.unit, email: S.who.email, name, date: S.date, start: toT(S.sel.s), end: toT(S.sel.e), purpose: $("purpose").value.trim() }).catch(() => ({ ok: false, error: "server_error" }));
+  busy($("bookBtn"), false);
+  if (!r.ok) {
+    let msg = ERR[r.error] || ERR.server_error;
+    if (r.error === "over_allocation") msg = `${S.who.unit_label} has ${hrs(r.available)} left for ${r.year}, and this booking needs ${hrs(r.requested)}.`;
+    $("bookMsg").innerHTML = `<div class="msg bad">${esc(msg)}</div>`;
+    if (r.error === "clash" || r.error === "in_past") { S.sel = null; await pickDate(S.date); $("bookMsg").innerHTML = `<div class="msg bad">${esc(msg)}</div>`; $("s2").scrollIntoView({ behavior: "smooth" }); }
+    else $("s3").scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+  const b = r.booking;
+  show(`${TICK}<h2>Booked. The room is yours.</h2>${facts(b)}
+    <p class="note" style="margin:0 0 14px">${r.emailed ? `A confirmation with the calendar invite is on its way to <b>${esc(b.email)}</b>.` : `Your booking is saved, but the confirmation email did not send. Take a screenshot of this page and add it to your calendar below.`} ${esc(hrs(b.available))} of ${Number(b.allocated)} left for ${esc(b.unit_label)} in ${b.year}.</p>
+    <div class="stack"><a class="btn" target="_blank" rel="noopener" href="${esc(r.links.google)}">Add to Google Calendar</a><a class="btn ghost" target="_blank" rel="noopener" href="${esc(r.links.outlook)}">Add to Outlook</a><button class="btn ghost" id="icsBtn" type="button">Download calendar file</button><a class="btn ghost" href="?site=${encodeURIComponent(SITE)}">Book another time</a></div>`);
+  $("icsBtn").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([r.ics], { type: "text/calendar" })); a.download = `conference-room-${b.ref}.ics`; document.body.appendChild(a); a.click(); a.remove(); };
+};
+
+(async function init() {
+  try {
+    if (qs.get("cancel")) return await cancelScreen(qs.get("cancel"));
+    if (qs.get("access")) return await accessScreen(qs.get("access"), qs.get("do"));
+    await loadState();
+    setHeader(S.site);
+    $("foot").innerHTML = `Managed by ${esc(S.site.office_name)}. Need a hand? ${S.site.office_phone ? esc(S.site.office_phone) + " or " : ""}<a href="mailto:${esc(S.site.office_email)}">${esc(S.site.office_email)}</a>`;
+    renderUnits(); renderDays(); renderRuler();
+    $("loading").hidden = true; $("flow").hidden = false;
+    if ($("unit").value && $("email").value) $("whoForm").requestSubmit();
+  } catch (e) {
+    show(`${DOT}<h2>The booking page could not load</h2><p class="note">Check your connection and reload. If it keeps happening, email info@mbcmringwood.com.au.</p><div class="stack mt"><button class="btn" onclick="location.reload()">Reload</button></div>`);
+  }
+})();
+</script>
+</body>
+</html>
