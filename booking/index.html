@@ -61,8 +61,24 @@ input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{ou
 .meter{margin-top:14px}
 .meter-bar{height:8px;border-radius:4px;background:var(--taken);overflow:hidden}
 .meter-bar i{display:block;height:100%;background:var(--brass);border-radius:4px}
-.meter-txt{display:flex;justify-content:space-between;font-size:14px;margin-top:7px;color:var(--ink-2)}
-.meter-txt b{font-weight:600;color:var(--ink)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.stats div{background:var(--paper);border-radius:9px;padding:10px 12px}
+.stats b{display:block;font-size:24px;font-weight:700;line-height:1.1;letter-spacing:-.02em}
+.stats span{display:block;font-size:12px;color:var(--mute);margin-top:3px}
+.stats .left{background:var(--brass-soft)}
+.stats .left span{color:var(--brass-deep)}
+.statnote{font-size:13px;color:var(--mute);margin-top:8px}
+.hist{margin-top:10px;border-top:1px solid var(--line)}
+.hist summary{cursor:pointer;font-size:15px;font-weight:600;padding:12px 0 10px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.hist summary::-webkit-details-marker{display:none}
+.hist summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(45deg);margin-right:4px;transition:transform .15s}
+.hist[open] summary::after{transform:rotate(-135deg)}
+.hrow{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:9px 0;border-top:1px solid #eef1f5;font-size:14px}
+.hrow b{font-weight:600}
+.hrow small{font-size:13px;color:var(--mute)}
+.hrow .r{text-align:right}
+.tag{display:inline-block;font-size:11px;font-weight:600;background:var(--brass-soft);color:var(--brass-deep);border-radius:4px;padding:1px 6px;margin-left:6px;vertical-align:1px}
+.hempty{font-size:14px;color:var(--mute);padding:4px 0 10px}
 
 /* days */
 .days{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -4px;scroll-snap-type:x proximity;scrollbar-width:none}
@@ -160,7 +176,10 @@ input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{ou
       </form>
       <div id="whoOk" hidden>
         <div class="who"><div><strong id="whoTitle"></strong><span id="whoSub"></span></div><button class="linkbtn" id="whoChange" type="button">Change</button></div>
-        <div class="meter"><div class="meter-bar"><i id="meterFill"></i></div><div class="meter-txt"><span><b id="mLeft"></b> left</span><span id="mUsed"></span></div></div>
+        <div class="meter"><div class="meter-bar"><i id="meterFill"></i></div></div>
+        <div class="stats"><div class="left"><b id="stLeft"></b><span>hours left</span></div><div><b id="stUsed"></b><span>hours used</span></div><div><b id="stAlloc"></b><span id="stAllocLbl">allowance</span></div></div>
+        <p class="statnote" id="statNote"></p>
+        <details class="hist" id="hist"><summary id="histSum"></summary><div id="histList"></div></details>
       </div>
     </div>
 
@@ -374,8 +393,14 @@ function renderWho() {
   $("whoSub").textContent = w.email;
   const pct = Math.max(0, Math.min(100, (Number(w.available) / Number(w.allocated)) * 100));
   $("meterFill").style.width = pct + "%";
-  $("mLeft").textContent = hrs(w.available);
-  $("mUsed").textContent = `${hrs(w.used)} used of ${Number(w.allocated)} in ${w.year}`;
+  const num = (n) => { const v = Number(n); return v % 1 === 0 ? String(v) : v.toFixed(1); };
+  $("stLeft").textContent = num(w.available); $("stUsed").textContent = num(w.used); $("stAlloc").textContent = num(w.allocated);
+  $("stAllocLbl").textContent = `allowance ${w.year}`;
+  const up = Number(w.upcoming_hours || 0);
+  $("statNote").textContent = up > 0 ? `Hours used includes ${hrs(up)} booked but still to come. The allowance resets on 1 January.` : "The allowance resets on 1 January.";
+  const h = w.history || [];
+  $("histSum").textContent = `${w.unit_label} bookings in ${w.year} (${h.length})`;
+  $("histList").innerHTML = h.length ? h.map((b) => { const x = pd(b.date); return `<div class="hrow"><div><b>${DAYS[x.getUTCDay()].slice(0, 3)} ${x.getUTCDate()} ${MONTHS[x.getUTCMonth()].slice(0, 3)}</b>${b.upcoming ? '<span class="tag">Upcoming</span>' : ""}<br><small>${b.start ? `${esc(t12(toMin(b.start)))} to ${esc(t12(toMin(b.end)))}` : "Booked through the office"}${b.purpose ? ", " + esc(b.purpose) : ""}</small></div><div class="r"><b>${esc(hrs(b.hours))}</b><br><small>${esc(num(b.balance))} left after</small></div></div>`; }).join("") : `<p class="hempty">No bookings yet this year.</p>`;
   renderBar();
 }
 async function refreshWho(year) {
