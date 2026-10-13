@@ -308,7 +308,9 @@ function setHeader(s) {
   document.title = `Book the ${(s.room || "conference room").toLowerCase()}${s.name ? ", " + s.name : ""}`;
 }
 async function loadState(date) {
-  const r = await api("state", date ? { date } : {});
+  let r;
+  try { r = await api("state", date ? { date } : {}); }
+  catch (e) { await new Promise((ok) => setTimeout(ok, 1500)); r = await api("state", date ? { date } : {}); }
   if (r.error) throw new Error(r.error);
   S.site = r.site; S.units = r.units; S.day = r; S.date = r.date;
   return r;
@@ -472,7 +474,7 @@ $("bookBtn").onclick = async () => {
     renderUnits(); renderDays(); renderRuler();
     $("loading").hidden = true; $("flow").hidden = false;
   } catch (e) {
-    show(`${DOT}<h2>The booking page could not load</h2><p class="note">Check your connection and reload. If it keeps happening, email info@ringwood.mbcm.com.au.</p><div class="stack mt"><button class="btn" onclick="location.reload()">Reload</button></div>`);
+    show(`${DOT}<h2>The booking page could not load</h2><p class="note">Check your connection and reload. If it keeps happening, email info@ringwood.mbcm.com.au.</p><p class="note" style="font-size:12px">Details: ${esc((e && (e.name + ": " + e.message)) || "unknown")}</p><div class="stack mt"><button class="btn" onclick="location.reload()">Reload</button></div>`);
   }
 })();
 </script>
