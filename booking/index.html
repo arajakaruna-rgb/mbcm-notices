@@ -471,7 +471,6 @@ $("bookBtn").onclick = async () => {
     $("foot").innerHTML = `Managed by ${esc(S.site.office_name)}. Need a hand? ${S.site.office_phone ? esc(S.site.office_phone) + " or " : ""}<a href="mailto:${esc(S.site.office_email)}">${esc(S.site.office_email)}</a>`;
     renderUnits(); renderDays(); renderRuler();
     $("loading").hidden = true; $("flow").hidden = false;
-    if ($("unit").value && $("email").value) $("whoForm").requestSubmit();
   } catch (e) {
     show(`${DOT}<h2>The booking page could not load</h2><p class="note">Check your connection and reload. If it keeps happening, email info@ringwood.mbcm.com.au.</p><div class="stack mt"><button class="btn" onclick="location.reload()">Reload</button></div>`);
   }
